@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HM 2:30 — Program 26 Minggu</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f7f6f3;
+  --surface: #ffffff;
+  --surface2: #f0efe9;
+  --border: rgba(0,0,0,0.09);
+  --border2: rgba(0,0,0,0.15);
+  --text: #1a1a18;
+  --muted: #6b6b66;
+  --soft: #9c9c96;
+  --accent: #c84b0f;
+  --accent-bg: #fdf0eb;
+  --green: #2d6a2d;
+  --green-bg: #edf5ed;
+  --blue: #1a4d8f;
+  --blue-bg: #eaf1fb;
+  --amber: #8a5800;
+  --amber-bg: #fdf5e0;
+  --phase1: #2d6a2d;
+  --phase2: #1a5a7a;
+  --phase3: #7a4a1a;
+  --phase4: #6a1a6a;
+  --phase5: #8a0000;
+  --phase6: #1a1a6a;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:var(--bg); color:var(--text); font-family:'DM Sans',sans-serif; min-height:100vh; }
+
+/* HEADER */
+.app-header {
+  background: var(--text);
+  color: #f7f6f3;
+  padding: 28px 24px 24px;
+  position: sticky; top:0; z-index:100;
+  border-bottom: 2px solid var(--text);
+}
+.header-inner { max-width: 860px; margin: 0 auto; display:flex; align-items:center; gap:16px; flex-wrap:wrap; }
+.header-title { font-family:'Bebas Neue',sans-serif; font-size:32px; letter-spacing:2px; color:#f7f6f3; line-height:1; }
+.header-sub { font-size:12px; color:rgba(247,246,243,0.55); letter-spacing:1px; margin-top:3px; }
+.progress-wrap { margin-left:auto; text-align:right; }
+.progress-label { font-size:11px; color:rgba(247,246,243,0.5); letter-spacing:1px; margin-bottom:6px; }
+.progress-bar-outer { width:160px; height:5px; background:rgba(255,255,255,0.15); border-radius:3px; overflow:hidden; margin-left:auto; }
+.progress-bar-inner { height:100%; background:var(--accent); border-radius:3px; transition:width 0.5s ease; }
+.progress-pct { font-family:'DM Mono',monospace; font-size:12px; color:rgba(247,246,243,0.7); margin-top:4px; }
+
+/* PHASE NAV */
+.phase-nav { background:var(--surface); border-bottom:1px solid var(--border); padding:0 16px; position:sticky; top:88px; z-index:90; }
+.phase-nav-inner { max-width:860px; margin:0 auto; display:flex; gap:0; overflow-x:auto; }
+.pnav { padding:12px 14px; font-size:12px; font-weight:500; color:var(--muted); border-bottom:2px solid transparent; cursor:pointer; white-space:nowrap; transition:all 0.2s; letter-spacing:0.3px; background:none; border-top:none; border-left:none; border-right:none; font-family:'DM Sans',sans-serif; }
+.pnav:hover { color:var(--text); }
+.pnav.active { color:var(--accent); border-bottom-color:var(--accent); }
+
+/* MAIN */
+.main { max-width:860px; margin:0 auto; padding:24px 16px 60px; }
+
+/* PHASE HEADER */
+.phase-header {
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:20px 24px;
+  margin-bottom:20px;
+  display:none;
+}
+.phase-header.active { display:block; }
+.ph-top { display:flex; align-items:flex-start; gap:16px; flex-wrap:wrap; margin-bottom:16px; }
+.ph-badge { font-family:'Bebas Neue',sans-serif; font-size:13px; letter-spacing:2px; padding:4px 10px; border-radius:4px; }
+.ph-name { font-size:18px; font-weight:500; line-height:1.2; }
+.ph-period { font-size:12px; color:var(--muted); margin-top:3px; font-family:'DM Mono',monospace; }
+.ph-stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(120px,1fr)); gap:10px; }
+.ph-stat { background:var(--surface2); border-radius:8px; padding:10px 14px; }
+.ph-stat-l { font-size:10px; letter-spacing:1px; color:var(--soft); text-transform:uppercase; margin-bottom:3px; }
+.ph-stat-v { font-size:16px; font-weight:500; }
+
+/* WEEK SECTION */
+.week-section { display:none; }
+.week-section.active { display:block; }
+
+.week-block {
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:12px;
+  margin-bottom:12px;
+  overflow:hidden;
+}
+.week-header {
+  display:flex; align-items:center; gap:12px;
+  padding:14px 18px;
+  border-bottom:1px solid var(--border);
+  cursor:pointer;
+  user-select:none;
+  transition:background 0.15s;
+}
+.week-header:hover { background:var(--surface2); }
+.wk-num { font-family:'Bebas Neue',sans-serif; font-size:22px; line-height:1; color:var(--soft); min-width:28px; }
+.wk-dates { font-family:'DM Mono',monospace; font-size:11px; color:var(--muted); }
+.wk-title { font-size:14px; font-weight:500; flex:1; }
+.wk-vol { font-family:'DM Mono',monospace; font-size:12px; color:var(--accent); }
+.wk-chevron { font-size:14px; color:var(--soft); transition:transform 0.2s; }
+.wk-status { width:8px; height:8px; border-radius:50%; margin-left:4px; flex-shrink:0; }
+.wk-status.done { background:#2d6a2d; }
+.wk-status.partial { background:#8a5800; }
+.wk-status.pending { background:#d0cfc8; }
+
+.week-body { padding:16px 18px; display:none; }
+.week-body.open { display:block; }
+
+/* DAY ROW */
+.day-row {
+  display:grid; grid-template-columns:100px 1fr auto;
+  gap:12px; align-items:start;
+  padding:12px 0;
+  border-bottom:1px solid var(--border);
+}
+.day-row:last-child { border-bottom:none; padding-bottom:0; }
+.day-col { }
+.day-name { font-size:12px; font-weight:600; color:var(--muted); letter-spacing:0.5px; }
+.day-date { font-size:11px; color:var(--soft); font-family:'DM Mono',monospace; }
+.day-workout { }
+.day-workout-title { font-size:14px; font-weight:500; margin-bottom:3px; }
+.day-workout-desc { font-size:12px; color:var(--muted); line-height:1.6; }
+.day-chips { display:flex; gap:5px; flex-wrap:wrap; margin-top:6px; }
+.chip { font-size:10px; padding:2px 7px; border-radius:3px; border:1px solid var(--border2); color:var(--muted); }
+
+.day-action { display:flex; flex-direction:column; gap:6px; align-items:flex-end; }
+.type-pill { font-size:10px; padding:3px 8px; border-radius:20px; font-weight:600; letter-spacing:0.3px; white-space:nowrap; }
+.pill-easy { background:var(--green-bg); color:var(--green); }
+.pill-long { background:var(--blue-bg); color:var(--blue); }
+.pill-tempo { background:var(--amber-bg); color:var(--amber); }
+.pill-interval { background:#f0ebfd; color:#5a1a9a; }
+.pill-rest { background:var(--surface2); color:var(--soft); }
+.pill-race { background:#fdecea; color:#8a0000; }
+
+.miss-btn {
+  font-size:10px; padding:4px 9px; border-radius:6px;
+  border:1px solid var(--border2); background:var(--surface);
+  color:var(--muted); cursor:pointer; font-family:'DM Sans',sans-serif;
+  transition:all 0.15s; white-space:nowrap;
+}
+.miss-btn:hover { border-color:var(--accent); color:var(--accent); }
+.miss-btn.missed { background:var(--accent-bg); border-color:var(--accent); color:var(--accent); }
+
+/* COMPLETE BUTTON */
+.done-btn {
+  font-size:11px; padding:5px 11px; border-radius:6px;
+  border:1.5px solid var(--border2); background:var(--surface);
+  color:var(--muted); cursor:pointer; font-family:'DM Sans',sans-serif;
+  transition:all 0.2s; white-space:nowrap; display:flex; align-items:center; gap:5px;
+}
+.done-btn:hover { border-color:var(--green); color:var(--green); }
+.done-btn.completed { background:var(--green-bg); border-color:var(--green); color:var(--green); font-weight:600; }
+.done-btn .check-icon { font-size:13px; line-height:1; }
+
+/* LOG PANEL */
+.log-panel {
+  margin-top:0; padding:0; max-height:0; overflow:hidden;
+  transition:max-height 0.3s ease, padding 0.2s;
+  background:var(--green-bg); border-radius:0 0 8px 8px;
+}
+.log-panel.open {
+  max-height:400px; padding:14px 16px;
+  border:1px solid rgba(45,106,45,0.2); border-top:none;
+  margin-top:-1px;
+}
+.log-title { font-size:12px; font-weight:600; color:var(--green); margin-bottom:10px; }
+.log-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:10px; }
+.log-field { display:flex; flex-direction:column; gap:4px; }
+.log-label { font-size:10px; letter-spacing:1px; color:#4a7a4a; text-transform:uppercase; }
+.log-input {
+  padding:7px 10px; border-radius:6px; border:1px solid rgba(45,106,45,0.25);
+  background:#fff; font-size:13px; font-family:'DM Mono',monospace;
+  color:var(--text); outline:none; width:100%;
+  transition:border-color 0.15s;
+}
+.log-input:focus { border-color:var(--green); }
+.log-input::placeholder { color:#9cbc9c; }
+.log-result {
+  margin-top:8px; padding:10px 12px; border-radius:6px;
+  background:#fff; border:1px solid rgba(45,106,45,0.2);
+  font-size:12px; line-height:1.6; color:var(--muted); display:none;
+}
+.log-result.show { display:block; }
+.log-result .deficit { color:var(--accent); font-weight:600; }
+.log-result .surplus { color:var(--green); font-weight:600; }
+.log-result .ok { color:var(--green); font-weight:600; }
+.log-btns { display:flex; gap:8px; margin-top:10px; flex-wrap:wrap; }
+.log-save-btn {
+  font-size:11px; padding:6px 14px; border-radius:6px;
+  border:1px solid var(--green); background:var(--green);
+  color:#fff; cursor:pointer; font-family:'DM Sans',sans-serif; transition:opacity 0.15s;
+}
+.log-save-btn:hover { opacity:0.85; }
+.log-cancel-btn {
+  font-size:11px; padding:6px 12px; border-radius:6px;
+  border:1px solid var(--border2); background:transparent;
+  color:var(--muted); cursor:pointer; font-family:'DM Sans',sans-serif;
+}
+.log-saved-summary {
+  margin-top:6px; padding:8px 12px; border-radius:6px;
+  background:#fff; border:1px solid rgba(45,106,45,0.2);
+  font-size:11px; font-family:'DM Mono',monospace;
+  color:var(--green); line-height:1.8; display:none;
+}
+.log-saved-summary.show { display:block; }
+
+/* MISSED PANEL */
+.missed-panel {
+  display:none; margin-top:10px; padding:14px 16px;
+  background:var(--accent-bg); border:1px solid rgba(200,75,15,0.2);
+  border-radius:8px;
+}
+.missed-panel.show { display:block; }
+.missed-title { font-size:12px; font-weight:600; color:var(--accent); margin-bottom:8px; }
+.missed-workout { font-size:13px; margin-bottom:12px; line-height:1.6; color:var(--text); }
+.missed-btns { display:flex; gap:8px; flex-wrap:wrap; }
+.action-btn {
+  font-size:11px; padding:6px 12px; border-radius:6px;
+  border:1px solid var(--accent); background:var(--accent);
+  color:#fff; cursor:pointer; font-family:'DM Sans',sans-serif;
+  transition:all 0.15s;
+}
+.action-btn.outline { background:transparent; color:var(--accent); }
+.action-btn:hover { opacity:0.85; }
+
+/* DEFICIT BADGE on day row */
+.deficit-badge {
+  font-size:10px; padding:2px 7px; border-radius:3px;
+  background:#fdf0eb; color:var(--accent); border:1px solid rgba(200,75,15,0.2);
+  font-family:'DM Mono',monospace; white-space:nowrap;
+}
+
+/* DAY ROW COMPLETED STATE */
+.day-row.completed-row { background: linear-gradient(to right, rgba(45,106,45,0.04), transparent); border-radius:8px; }
+.week-prog { margin-bottom:14px; }
+.wp-label { display:flex; justify-content:space-between; font-size:11px; color:var(--soft); margin-bottom:5px; }
+.wp-bar { height:4px; background:var(--surface2); border-radius:2px; overflow:hidden; }
+.wp-fill { height:100%; background:var(--green); border-radius:2px; transition:width 0.3s; }
+
+/* NOTE BOX */
+.week-note {
+  margin-top:14px; padding:12px 14px;
+  background:var(--surface2); border-radius:8px;
+  font-size:12px; color:var(--muted); line-height:1.6;
+  border-left:3px solid var(--accent);
+}
+.week-note strong { color:var(--text); }
+
+/* RACE COUNTDOWN */
+.race-banner {
+  background:var(--text); color:#f7f6f3;
+  border-radius:12px; padding:24px;
+  margin-bottom:20px; text-align:center;
+}
+.race-banner-title { font-family:'Bebas Neue',sans-serif; font-size:36px; letter-spacing:3px; color:#f7f6f3; }
+.race-banner-sub { font-size:13px; color:rgba(247,246,243,0.6); margin-top:6px; }
+.countdown-num { font-family:'Bebas Neue',sans-serif; font-size:56px; color:var(--accent); line-height:1; margin:12px 0 4px; }
+.countdown-label { font-size:12px; color:rgba(247,246,243,0.5); letter-spacing:2px; }
+</style>
+</head>
+<body>
+
+<div class="app-header">
+  <div class="header-inner">
+    <div>
+      <div class="header-title">HM 2:30 · 26 WEEKS</div>
+      <div class="header-sub">21 APR – 21 OKT 2026 · 3 HARI/MINGGU · F1: 20–25 KM | F2–F5: 30 KM</div>
+    </div>
+    <div class="progress-wrap">
+      <div class="progress-label">PROGRESS KESELURUHAN</div>
+      <div class="progress-bar-outer"><div class="progress-bar-inner" id="globalBar" style="width:0%"></div></div>
+      <div class="progress-pct" id="globalPct">0 / 26 minggu</div>
+    </div>
+  </div>
+</div>
+
+<div class="phase-nav">
+  <div class="phase-nav-inner">
+    <button class="pnav active" onclick="showPhase(1)">F1 · Base</button>
+    <button class="pnav" onclick="showPhase(2)">F2 · Aerobic</button>
+    <button class="pnav" onclick="showPhase(3)">F3 · Threshold</button>
+    <button class="pnav" onclick="showPhase(4)">F4 · Speed</button>
+    <button class="pnav" onclick="showPhase(5)">F5 · Race Prep</button>
+    <button class="pnav" onclick="showPhase(6)">F6 · Taper</button>
+  </div>
+</div>
+
+<div style="background:#fff;border-bottom:1px solid rgba(0,0,0,0.08);padding:8px 16px;">
+  <div style="max-width:860px;margin:0 auto;display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
+    <span style="font-size:10px;letter-spacing:1px;color:#9c9c96;margin-right:4px;white-space:nowrap;">ZONA HR</span>
+    <span style="font-size:11px;padding:3px 9px;border-radius:3px;background:#edf5ed;color:#2d6a2d;white-space:nowrap;">Z1 · 122–135</span>
+    <span style="font-size:11px;padding:3px 9px;border-radius:3px;background:#e6f4f1;color:#1a6a5a;white-space:nowrap;">Z2 · 136–145</span>
+    <span style="font-size:11px;padding:3px 9px;border-radius:3px;background:#fdf5e0;color:#7a4a1a;white-space:nowrap;">Z3 · 146–155</span>
+    <span style="font-size:11px;padding:3px 9px;border-radius:3px;background:#fdf0eb;color:#c84b0f;white-space:nowrap;">Z4 · 156–165</span>
+    <span style="font-size:11px;padding:3px 9px;border-radius:3px;background:#fdecea;color:#8a0000;white-space:nowrap;">Z5 · 166–175</span>
+    <span style="font-size:10px;color:#9c9c96;margin-left:4px;">· HRmax 188 bpm · Race pace 7:06 = Z4 · F1 easy = Z2</span>
+  </div>
+</div>
+
+<div class="main" id="mainContent"></div>
+
+<script>
+// ─── STORAGE ────────────────────────────────────────────────────────────────
+const STORE_KEY = 'hm_plan_logs_v2';
+function loadLogs() {
+  try { return JSON.parse(localStorage.getItem(STORE_KEY) || '{}'); } catch(e){ return {}; }
+}
+function saveLogs(logs) {
+  try { localStorage.setItem(STORE_KEY, JSON.stringify(logs)); } catch(e){}
+}
+
+// ─── PHASES DATA ─────────────────────────────────────────────────────────────
+const PHASES = [
+  {
+    id:1, name:"Aerobic Base", weeks:"Minggu 1–4", period:"21 Apr – 18 Mei 2026",
+    badge:"FASE 1", badgeColor:"#edf5ed", badgeText:"#2d6a2d",
+    volume:"20–25 km/minggu", sessions:"3 sesi/minggu", focus:"Z2 easy (HR 136–145)", longRun:"9–10 km",
+    note:"Semua sesi easy dan long run di Z2 (136–145 bpm) — cukup ada stimulus aerobik tanpa memaksa tubuh. Pace estimasi 8:30–9:00/km. Volume lebih ringan 20–25 km sesuai kapasitas Anda di 4 minggu pertama."
+  },
+  {
+    id:2, name:"Aerobic Development", weeks:"Minggu 5–8", period:"19 Mei – 15 Jun 2026",
+    badge:"FASE 2", badgeColor:"#eaf1fb", badgeText:"#1a4d8f",
+    volume:"30 km/minggu", sessions:"3 sesi/minggu", focus:"Z2 + Tempo Z3", longRun:"16 km",
+    note:"Pace easy run akan mulai turun alami ke 8:15–8:30 dengan HR yang sama — tanda aerobic base membaik. Mulai kenalkan gel/nutrisi saat long run."
+  },
+  {
+    id:3, name:"Lactate Threshold", weeks:"Minggu 9–12", period:"16 Jun – 13 Jul 2026",
+    badge:"FASE 3", badgeColor:"#fdf5e0", badgeText:"#7a4a1a",
+    volume:"30 km/minggu", sessions:"3 sesi/minggu", focus:"Tempo Z3 + Threshold Z4", longRun:"18 km",
+    note:"Pertama kali berkenalan dengan race pace 7:06 di Z4. Cadence target 158–162 spm. Lakukan time trial 10K di akhir fase — target sub-55 menit."
+  },
+  {
+    id:4, name:"VO2max & Speed", weeks:"Minggu 13–16", period:"14 Jul – 10 Ags 2026",
+    badge:"FASE 4", badgeColor:"#f5ebfd", badgeText:"#5a1a9a",
+    volume:"30 km/minggu", sessions:"3 sesi/minggu", focus:"Interval Z5 + Race pace Z4", longRun:"20 km",
+    note:"Fase terberat — interval Z5 (HR 166–175) akan terasa berat, itu normal. VO2max diperkirakan ~48–50. Tidur 8 jam+ adalah latihan yang tidak boleh dilewatkan."
+  },
+  {
+    id:5, name:"Race Simulation", weeks:"Minggu 17–21", period:"11 Ags – 14 Sep 2026",
+    badge:"FASE 5", badgeColor:"#fdecea", badgeText:"#8a0000",
+    volume:"28–30 km/minggu", sessions:"3 sesi/minggu", focus:"Race pace Z4 + Simulasi", longRun:"22–25 km",
+    note:"Simulasi kondisi race. Pakai sepatu race saat long run untuk break-in. Latih strategi nutrisi lengkap. Ini peak training — setelah ini mulai taper."
+  },
+  {
+    id:6, name:"Taper & Race", weeks:"Minggu 22–26", period:"15 Sep – 21 Okt 2026",
+    badge:"FASE 6", badgeColor:"#f0edf8", badgeText:"#1a1a6a",
+    volume:"Turun 40%→20%", sessions:"3 sesi/minggu", focus:"Freshen up", longRun:"Race Day",
+    note:"Taper adalah bagian dari latihan. Rasa capek, lesu, dan overthinking saat taper itu NORMAL — bukan tanda kehilangan kebugaran. Percayai prosesnya."
+  }
+];
+
+// ─── GENERATE WEEKS ──────────────────────────────────────────────────────────
+function generateWeeks() {
+  const weeks = [];
+  const start = new Date(2026, 3, 21);
+  const fmt = (d) => {
+    const months = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Ags','Sep','Okt','Nov','Des'];
+    return `${d.getDate()} ${months[d.getMonth()]}`;
+  };
+  const getDayDate = (weekStart, offset) => {
+    const d = new Date(weekStart); d.setDate(d.getDate() + offset); return fmt(d);
+  };
+  for (let w = 1; w <= 26; w++) {
+    const weekStart = new Date(start);
+    weekStart.setDate(start.getDate() + (w-1)*7);
+    const weekEnd = new Date(weekStart); weekEnd.setDate(weekStart.getDate()+6);
+    const phase = w<=4?1:w<=8?2:w<=12?3:w<=16?4:w<=21?5:6;
+    const tueDate=getDayDate(weekStart,1), thuDate=getDayDate(weekStart,3),
+          satDate=getDayDate(weekStart,5), sunDate=getDayDate(weekStart,6);
+    const workout = getWorkout(w, phase, tueDate, thuDate, satDate, sunDate);
+    weeks.push({ week:w, phase, start:fmt(weekStart), end:fmt(weekEnd),
+      tueDate, thuDate, satDate, sunDate, ...workout });
+  }
+  return weeks;
+}
+
+function getWorkout(w, phase, tue, thu, sat, sun) {
+  // Z1:122-135 | Z2:136-145 | Z3:146-155 | Z4:156-165 | Z5:166-175
+
+  if (phase === 1) {
+    const configs=[{tue:7,thu:5,long:9,total:21},{tue:7,thu:5,long:10,total:22},{tue:8,thu:5,long:10,total:23},{tue:6,thu:4,long:8,total:18}];
+    const cfg=configs[w-1]; const isRec=w===4; const cad=[150,152,153,150][w-1];
+    return {
+      title: isRec?"Recovery Week — Aerobic Base":"Aerobic Base", totalKm:cfg.total,
+      sessions:[
+        {day:"SELASA",date:tue,type:"easy",targetKm:cfg.tue,
+          title:`Easy Run ${cfg.tue} km + Cadence Drill`,
+          desc:isRec?`HR di Z2 (136–145 bpm). Pace santai, tidak ada drill.`:`Jaga HR di Z2: 136–145 bpm. Kalau HR masuk 146+, turunkan pace. Pace estimasi 8:30–9:00/km. ${w===1?"4×1 mnt cadence drill @ "+cad+" spm di 2 km terakhir.":w===2?"6×1 mnt cadence drill @ 152 spm.":"Cadence drill 6×1 mnt @ 153 spm."}`,
+          chips:[`${cfg.tue} km`,"Z2: HR 136–145","Pace 8:30–9:00",`Cadence ${cad} spm`]},
+        {day:"KAMIS",date:thu,type:"easy",targetKm:cfg.thu,
+          title:`Easy Run ${cfg.thu} km + Strides`,
+          desc:isRec?"HR di Z2 (136–145). Tidak ada strides.":"HR di Z2 (136–145 bpm). Di akhir: 4×100m strides — akselerasi bertahap, recovery 60 dtk jalan.",
+          chips:[`${cfg.thu} km`,"Z2: HR 136–145",isRec?"Santai":"4×100m strides"]},
+        {day:isRec?"SABTU":"SABTU / MINGGU",date:isRec?sat:sat+"/"+sun,type:"long",targetKm:cfg.long,
+          title:`Long Run ${cfg.long} km`,
+          desc:isRec?`Long run lebih pendek untuk recovery. HR di Z2 (136–145).`:`Pace 8:30–9:00/km. HR di Z2 (136–145) sepanjang waktu. Kalau HR naik ke 146+, perlambat sedikit. Bawa minum 500ml.`,
+          chips:[`${cfg.long} km`,"Z2: HR 136–145","Pace 8:30–9:00","Bawa minum"]}
+      ],
+      note:isRec?`Week 4 Recovery: Volume ${cfg.total} km. HR tetap di Z2. Jika di pace yang sama HR mulai lebih rendah, aerobic base sedang terbentuk.`:`Week ${w} (${cfg.total} km): Jaga HR di Z2 (136–145 bpm). Cadence ${cad} spm. Pace estimasi 8:30–9:00/km.`
+    };
+  }
+
+  if (phase === 2) {
+    const wP=w-4; const longKm=[16,17,18,14][wP-1]; const isRec=wP===4;
+    return {
+      title:isRec?"Recovery Week":"Aerobic Development", totalKm:isRec?24:30,
+      sessions:[
+        {day:"SELASA",date:tue,type:isRec?"easy":"tempo",targetKm:10,
+          title:isRec?"Easy Run 8 km":"Easy Run 10 km + Tempo Segment",
+          desc:isRec?"Recovery penuh — HR di Z2 (136–145 bpm).":`2 km WU di Z2 + ${wP<=2?'4 km':'6 km'} @ Z3 (HR 146–155, pace 7:45–8:10/km) + sisa easy Z2.`,
+          chips:isRec?["8 km","Z2: HR 136–145"]:["10 km",`${wP<=2?4:6} km @ Z3`,"HR 146–155","Pace 7:45–8:10"]},
+        {day:"KAMIS",date:thu,type:"easy",targetKm:8,
+          title:"Easy Run 8 km + Strides",
+          desc:"Recovery dari tempo Selasa. Z2 (HR 136–145). 4×100m strides di akhir.",
+          chips:["8 km","Z2: HR 136–145","4×100m strides"]},
+        {day:"SABTU / MINGGU",date:sat+"/"+sun,type:"long",targetKm:longKm,
+          title:`Long Run ${longKm} km`,
+          desc:isRec?"Long run lebih pendek, sangat santai. HR di Z2.":`${longKm-2} km @ Z2 + 2 km terakhir @ Z3 (HR 146–155). Latihan gel di km ${Math.round(longKm/2)}.`,
+          chips:[`${longKm} km`,isRec?"Z2: HR 136–145":"Z2 + finish Z3",isRec?"Santai":"Gel km "+Math.round(longKm/2)]}
+      ],
+      note:isRec?"Recovery week — pace easy turun alami ke 8:15–8:30 adalah tanda aerobic base membaik.":`Week ${w}: Tempo Z3 (HR 146–155) mulai aktifkan lactate threshold. Cadence target ${150+wP*2} spm.`
+    };
+  }
+
+  if (phase === 3) {
+    const wP=w-8; const longKm=[18,19,20,15][wP-1]; const isRec=wP===4;
+    const iDesc=["3×2 km @ Z3–Z4 (HR 146–165, pace 7:30–7:45) · Rec 90 dtk jogging","4×2 km @ Z3–Z4 (HR 146–165, pace 7:30–7:45) · Rec 90 dtk jogging","4×2 km @ Z4 (HR 156–165, pace 7:15–7:30) · Rec 2 mnt jogging","2×2 km @ Z3 (HR 146–155) — recovery"];
+    return {
+      title:isRec?"Recovery Week — Threshold":"Lactate Threshold", totalKm:isRec?22:30,
+      sessions:[
+        {day:"SELASA",date:tue,type:isRec?"easy":"interval",targetKm:10,
+          title:isRec?"Easy Run 7 km":"Threshold Interval 10 km",
+          desc:isRec?"Recovery penuh. Z2 (HR 136–145).":`2 km WU Z2 + ${iDesc[wP-1]} + 2 km CD Z2.`,
+          chips:isRec?["7 km","Z2: HR 136–145"]:["10 km","WU+CD Z2","Z3–Z4 interval"]},
+        {day:"KAMIS",date:thu,type:"tempo",targetKm:8,
+          title:isRec?"Easy Run 5 km":"Progressif Tempo 8 km",
+          desc:isRec?"Sangat santai, Z2.":`2 km easy Z2 → ${wP<=2?'4':'5'} km @ Z3 (HR 146–155, pace 7:30–7:50) → sisa easy Z2.`,
+          chips:isRec?["5 km","Z2"]:["8 km","Z3: HR 146–155","Progressif"]},
+        {day:"SABTU / MINGGU",date:sat+"/"+sun,type:"long",targetKm:longKm,
+          title:`Long Run ${longKm} km`,
+          desc:isRec?"Santai, Z2 (HR 136–145).":`${longKm-4} km Z2 + 4 km terakhir @ race pace 7:06 (Z4: HR 156–165). Gel km ${Math.round(longKm/3)} dan ${Math.round(longKm*2/3)}.`,
+          chips:[`${longKm} km`,isRec?"Z2: HR 136–145":"4 km Z4 race pace","Gel 2x"]}
+      ],
+      note:isRec?`Week ${w}: Recovery. Time trial 5 km opsional — target pace <5:30/km.`:`Week ${w}: Race pace 7:06 di Z4 (HR 156–165) mulai diperkenalkan. Cadence ${158+wP} spm.`
+    };
+  }
+
+  if (phase === 4) {
+    const wP=w-12; const longKm=[20,21,22,16][wP-1]; const isRec=wP===4;
+    const v5=["5×1000m @ Z5 (HR 166–175, pace 6:15–6:30) · Rec 2 mnt jogging","6×1000m @ Z5 (HR 166–175, pace 6:15–6:30) · Rec 90 dtk jogging","7×1000m @ Z5 (HR 166–175, pace 6:10–6:25) · Rec 90 dtk jogging","3×1000m @ Z4 (HR 156–165) — recovery"];
+    return {
+      title:isRec?"Recovery Week — VO2max":"VO2max & Speed", totalKm:isRec?22:30,
+      sessions:[
+        {day:"SELASA",date:tue,type:isRec?"easy":"interval",targetKm:10,
+          title:isRec?"Easy Run 7 km":"VO2max Interval 10 km",
+          desc:isRec?"Recovery total. Z2 (HR 136–145).":`2 km WU Z2 + ${v5[wP-1]} + 2 km CD Z2.`,
+          chips:isRec?["7 km","Z2: HR 136–145"]:["10 km","Z5: HR 166–175","WU+CD Z2"]},
+        {day:"KAMIS",date:thu,type:"tempo",targetKm:8,
+          title:isRec?"Easy 5 km + Strides":"HM Race Pace Run 8 km",
+          desc:isRec?"Santai Z2 + 4×100m strides.":`1 km WU Z2 + ${wP<=2?'6':'7'} km @ race pace 7:06 (Z4: HR 156–165) + 1 km CD Z2.`,
+          chips:isRec?["5 km","Z2","Strides"]:["8 km","Z4: HR 156–165","Race pace 7:06"]},
+        {day:"SABTU / MINGGU",date:sat+"/"+sun,type:"long",targetKm:longKm,
+          title:`Long Run ${longKm} km`,
+          desc:isRec?"Long run pendek, recovery Z2.":`${longKm-6} km Z2 + 6 km @ Z4 race feel (HR 156–165, pace 7:15–7:30). Gel km ${Math.round(longKm/3)} dan ${Math.round(longKm*2/3)}.`,
+          chips:[`${longKm} km`,isRec?"Z2 recovery":"6 km Z4 race feel","Gel 2x"]}
+      ],
+      note:isRec?`Week ${w}: Recovery. VO2max estimasi ~48–50. Kaki harus terasa ringan.`:`Week ${w}: Z5 interval paling berat. Tidur 8 jam wajib. Cadence ${162+wP} spm.`
+    };
+  }
+
+  if (phase === 5) {
+    const wP=w-16; const longKm=[22,24,25,22,18][wP-1]; const isPeak=wP===3; const isWD=wP>=4;
+    return {
+      title:isPeak?"PEAK WEEK — Race Simulation":isWD?"Race Prep Wind-down":"Race Simulation",
+      totalKm:isWD?(wP===5?24:28):30,
+      sessions:[
+        {day:"SELASA",date:tue,type:isWD?"tempo":"interval",targetKm:10,
+          title:isWD?"Tempo Run 8 km":"Race Pace Interval 10 km",
+          desc:isWD?"2 km WU Z2 + 5 km @ Z3–Z4 (HR 146–165, pace 7:20–7:30) + 1 km CD Z2.":`2 km WU Z2 + ${wP<=2?'2×4':'3×4'} km @ race pace 7:06 (Z4: HR 156–165, rec 3 mnt jalan) + 2 km CD Z2.`,
+          chips:isWD?["8 km","Z3–Z4: HR 146–165"]:["10 km","Z4: HR 156–165",`${wP<=2?'2':'3'}×4km`]},
+        {day:"KAMIS",date:thu,type:"easy",targetKm:8,
+          title:"Easy Run 8 km + Strides",
+          desc:isWD?"Recovery Z2. 4×100m strides.":"Z2 pemulihan dari interval. 4×100m strides cadence 168 spm.",
+          chips:["8 km","Z2: HR 136–145","Strides 4×100m"]},
+        {day:"SABTU / MINGGU",date:sat+"/"+sun,type:"long",targetKm:longKm,
+          title:isPeak?`PEAK Long Run ${longKm} km`:`Long Run ${longKm} km`,
+          desc:isPeak?`18 km Z2 + 7 km @ race pace 7:06 (Z4: HR 156–165). Gel km 7, 14, 19. Pakai sepatu race.`:isWD?`${longKm} km santai @ Z2. Biarkan tubuh recovery.`:`${longKm-6} km Z2 + 6 km @ Z4 race pace 7:06 (HR 156–165). Gel km ${Math.round(longKm/3)} dan ${Math.round(longKm*2/3)}.`,
+          chips:[`${longKm} km`,isPeak?"Sepatu race":"Z2",isPeak?"Gel 3x":"Gel 2x"]}
+      ],
+      note:isPeak?"PEAK TRAINING selesai. Jika long run 25 km dengan 7 km Z4 race pace berhasil, Anda siap untuk 2:30.":isWD?`Week ${w}: Turunkan volume. Tubuh perlu recovery untuk peak di race day.`:`Week ${w}: Race pace Z4 (HR 156–165) harus terasa manageable. Cadence 165–168 spm.`
+    };
+  }
+
+  if (phase === 6) {
+    const wP=w-21; const isRaceWeek=wP===5;
+    const longKm=[16,14,12,10,0][wP-1];
+    const tuKm=[8,7,6,5,3][wP-1], thuKm=[6,5,5,4,0][wP-1];
+    if (isRaceWeek) {
+      return { title:"🏁 RACE WEEK — 21 Oktober 2026", totalKm:26,
+        sessions:[
+          {day:"SELASA",date:tue,type:"easy",targetKm:3,title:"Easy Shakeout 3 km",desc:"Sangat santai. Z2 (HR 136–145). Hanya untuk jaga kaki bergerak.",chips:["3 km","Z2: HR 136–145","Sangat santai"]},
+          {day:"KAMIS",date:thu,type:"rest",targetKm:0,title:"Rest Total + Persiapan",desc:"Cek semua perlengkapan: sepatu race, bib, pakaian, gel. Tidur lebih awal.",chips:["Istirahat total","Cek gear"]},
+          {day:"SABTU 20 OKT",date:"20 Okt",type:"easy",targetKm:3,title:"Shakeout Run 3 km (H-1)",desc:"3 km sangat santai + 4 strides pendek. Makan malam karbohidrat. Tidur jam 21:00.",chips:["3 km","4 strides","Carbo loading"]},
+          {day:"MINGGU 21 OKT",date:"21 Okt",type:"race",targetKm:21.1,title:"🏁 HALF MARATHON — TARGET 2:30:00",desc:"Start 7:15/km di 5 km pertama → settle 7:06 di km 5–16 → habiskan semua di km 16–21. Gel km 7 dan km 14.",chips:["21.1 km","Start: 7:15/km","Build: 7:06/km","Gel km 7 & 14"]}
+        ],
+        note:"Race week: tidur, makan, percaya diri. Semua kerja keras 26 minggu sudah tersimpan di tubuh Anda."
+      };
+    }
+    return { title:`Taper Week ${wP}`, totalKm:tuKm+thuKm+longKm,
+      sessions:[
+        {day:"SELASA",date:tue,type:"easy",targetKm:tuKm,title:`Easy Run ${tuKm} km`,desc:wP<=2?`${tuKm} km @ Z2 + 4×100m strides.`:`${tuKm} km Z2 santai. Taper madness akan terasa — itu normal.`,chips:[`${tuKm} km`,"Z2","Strides 4×100m"]},
+        {day:"KAMIS",date:thu,type:"tempo",targetKm:thuKm,title:`Tempo Pendek ${thuKm} km`,desc:`1 km WU Z2 + ${thuKm-2} km @ Z3–Z4 (HR 146–165, pace 7:15–7:30) + 1 km CD Z2. Jaga neuromuscular sharpness.`,chips:[`${thuKm} km`,"Z3–Z4","Pendek tapi tajam"]},
+        {day:"SABTU / MINGGU",date:sat+"/"+sun,type:"long",targetKm:longKm,title:`Long Run ${longKm} km`,desc:`${longKm} km santai @ Z2. Tidak ada effort berat.`,chips:[`${longKm} km`,"Z2","Santai total"]}
+      ],
+      note:`Taper week ${wP}: Volume turun tapi intensitas dijaga. Rasa lesu atau kurang percaya diri saat taper adalah NORMAL.`
+    };
+  }
+}
+
+function getMissedReplacement(week, si, session) {
+  const reps = {
+    easy:`Geser ke hari berikutnya. Jika tidak bisa, lewati — kekurangan jarak akan diakumulasikan otomatis ke sesi berikutnya.`,
+    tempo:`Ganti dengan easy run jarak sama di Z2. Jangan lakukan tempo 2 hari berturut-turut.`,
+    interval:`Ganti dengan tempo run ${session.chips[0]} di hari lain. Jika terlewat 2+ hari: easy run dan skip interval minggu ini.`,
+    long:`Long run paling penting. Coba jadwal ulang ke Minggu pagi. Jika tidak bisa: kurangi jarak 30% dan lakukan di waktu ada.`
+  };
+  return reps[session.type] || "Coba jadwal ulang dalam 2 hari ke depan.";
+}
+
+// ─── APP STATE ────────────────────────────────────────────────────────────────
+const state = { openWeeks: new Set([1]) };
+
+// ─── DEFICIT ACCUMULATION ────────────────────────────────────────────────────
+// Returns extra km owed from previous sessions that were short
+function getDeficitForSession(logs, week, si) {
+  // Scan all previous sessions in order for deficits not yet covered
+  let deficit = 0;
+  const allWeeks = generateWeeks();
+  for (const wk of allWeeks) {
+    for (let i = 0; i < wk.sessions.length; i++) {
+      if (wk.week === week && i === si) return parseFloat(deficit.toFixed(2));
+      const key = `${wk.week}-${i}`;
+      const log = logs[key];
+      const s = wk.sessions[i];
+      if (!log || !log.completed || s.type === 'rest') continue;
+      const target = parseFloat(s.targetKm) || 0;
+      const actual = parseFloat(log.km) || 0;
+      const diff = actual - target;
+      deficit = Math.max(0, deficit - Math.max(0, diff)) + Math.max(0, -diff);
+      // If actual > target, surplus reduces deficit
+      if (actual > target) deficit = Math.max(0, deficit - (actual - target));
+    }
+  }
+  return parseFloat(deficit.toFixed(2));
+}
+
+// ─── RENDER ───────────────────────────────────────────────────────────────────
+function renderApp() {
+  const allWeeks = generateWeeks();
+  const logs = loadLogs();
+  const container = document.getElementById('mainContent');
+  container.innerHTML = '';
+
+  PHASES.forEach(phase => {
+    // Phase header
+    const phaseEl = document.createElement('div');
+    phaseEl.className = 'phase-header' + (phase.id===1?' active':'');
+    phaseEl.id = `phase-header-${phase.id}`;
+    phaseEl.innerHTML = `
+      <div class="ph-top">
+        <span class="ph-badge" style="background:${phase.badgeColor};color:${phase.badgeText}">${phase.badge}</span>
+        <div><div class="ph-name">${phase.name}</div><div class="ph-period">${phase.period} · ${phase.weeks}</div></div>
+      </div>
+      <div class="ph-stats">
+        <div class="ph-stat"><div class="ph-stat-l">Volume</div><div class="ph-stat-v">${phase.volume}</div></div>
+        <div class="ph-stat"><div class="ph-stat-l">Sesi/Minggu</div><div class="ph-stat-v">${phase.sessions}</div></div>
+        <div class="ph-stat"><div class="ph-stat-l">Fokus</div><div class="ph-stat-v">${phase.focus}</div></div>
+        <div class="ph-stat"><div class="ph-stat-l">Long Run</div><div class="ph-stat-v">${phase.longRun}</div></div>
+      </div>`;
+    container.appendChild(phaseEl);
+
+    const weekSection = document.createElement('div');
+    weekSection.className = 'week-section' + (phase.id===1?' active':'');
+    weekSection.id = `phase-weeks-${phase.id}`;
+
+    allWeeks.filter(w => w.phase===phase.id).forEach(wk => {
+      const wkEl = document.createElement('div');
+      wkEl.className = 'week-block'; wkEl.id = `week-${wk.week}`;
+      const isOpen = state.openWeeks.has(wk.week);
+
+      // Count completed sessions for week status dot
+      const completedCount = wk.sessions.filter((_,si) => logs[`${wk.week}-${si}`]?.completed).length;
+      const total = wk.sessions.filter(s=>s.type!=='rest').length;
+      const statusClass = completedCount===0?'pending':completedCount===total?'done':'partial';
+
+      let sessionsHtml = '';
+      wk.sessions.forEach((s, si) => {
+        const key = `${wk.week}-${si}`;
+        const log = logs[key] || {};
+        const isDone = !!log.completed;
+        const isRace = s.type==='race';
+        const isRest = s.type==='rest';
+
+        // Deficit for this session
+        const deficit = (!isRest && !isDone) ? getDeficitForSession(logs, wk.week, si) : 0;
+        const effectiveTarget = parseFloat((parseFloat(s.targetKm||0) + deficit).toFixed(2));
+
+        const deficitBadge = deficit > 0
+          ? `<span class="deficit-badge">+${deficit} km akumulasi</span>` : '';
+
+        const savedSummary = isDone ? `
+          <div class="log-saved-summary show" id="summary-${key}">
+            ✓ ${log.km} km · Pace ${log.pace||'—'} · HR ${log.hr||'—'} bpm · Cadence ${log.cadence||'—'} spm
+            ${log.note ? `<br>📝 ${log.note}` : ''}
+          </div>` : `<div class="log-saved-summary" id="summary-${key}"></div>`;
+
+        sessionsHtml += `
+          <div class="day-row${isDone?' completed-row':''}" id="row-${key}">
+            <div class="day-col">
+              <div class="day-name">${s.day}</div>
+              <div class="day-date">${s.date}</div>
+            </div>
+            <div class="day-workout">
+              <div class="day-workout-title" style="${isDone?'text-decoration:line-through;opacity:0.5;':''}">${s.title}</div>
+              ${!isDone?`<div class="day-workout-desc">${s.desc}</div>`:''}
+              <div class="day-chips">
+                ${s.chips.map(c=>`<span class="chip">${c}</span>`).join('')}
+                ${deficitBadge}
+              </div>
+              ${savedSummary}
+            </div>
+            <div class="day-action">
+              <span class="type-pill pill-${s.type}">${s.type==='easy'?'EASY':s.type==='long'?'LONG':s.type==='tempo'?'TEMPO':s.type==='interval'?'INTERVAL':s.type==='race'?'🏁 RACE':'REST'}</span>
+              ${!isRest?`<button class="done-btn${isDone?' completed':''}" id="donebtn-${key}" onclick="toggleLog(event,'${key}',${wk.week},${si})">
+                <span class="check-icon">${isDone?'✓':'○'}</span>${isDone?'Selesai':'Log sesi'}
+              </button>`:''}
+              ${!isRace&&!isRest&&!isDone?`<button class="miss-btn" onclick="toggleMissed(event,'${key}')">Terlewat?</button>`:''}
+            </div>
+          </div>
+
+          <div class="log-panel" id="log-${key}">
+            <div class="log-title">Log sesi — ${s.title}</div>
+            ${effectiveTarget>0?`<div style="font-size:11px;color:#4a7a4a;margin-bottom:8px;">Target: <strong>${effectiveTarget} km</strong>${deficit>0?' (termasuk +'+deficit+' km akumulasi dari sesi sebelumnya)':''}</div>`:''}
+            <div class="log-grid">
+              <div class="log-field">
+                <label class="log-label">Jarak aktual (km)</label>
+                <input class="log-input" id="inp-km-${key}" type="number" step="0.01" min="0" placeholder="${effectiveTarget}" oninput="previewLog('${key}',${effectiveTarget})">
+              </div>
+              <div class="log-field">
+                <label class="log-label">Avg Pace (mm:ss)</label>
+                <input class="log-input" id="inp-pace-${key}" type="text" placeholder="8:30">
+              </div>
+              <div class="log-field">
+                <label class="log-label">Avg HR (bpm)</label>
+                <input class="log-input" id="inp-hr-${key}" type="number" placeholder="140">
+              </div>
+              <div class="log-field">
+                <label class="log-label">Avg Cadence (spm)</label>
+                <input class="log-input" id="inp-cad-${key}" type="number" placeholder="155">
+              </div>
+            </div>
+            <div class="log-field" style="margin-bottom:6px;">
+              <label class="log-label">Catatan (opsional)</label>
+              <input class="log-input" id="inp-note-${key}" type="text" placeholder="Perasaan, kondisi, dll...">
+            </div>
+            <div class="log-result" id="log-result-${key}"></div>
+            <div class="log-btns">
+              <button class="log-save-btn" onclick="saveLog('${key}',${wk.week},${si},${effectiveTarget})">Simpan ✓</button>
+              <button class="log-cancel-btn" onclick="closeLog('${key}')">Batal</button>
+            </div>
+          </div>
+
+          <div class="missed-panel" id="missed-${key}">
+            <div class="missed-title">Sesi terlewat — program pengganti</div>
+            <div class="missed-workout">${getMissedReplacement(wk.week, si, s)}</div>
+            <div class="missed-btns">
+              <button class="action-btn" onclick="closeMissed('${key}')">Mengerti ✓</button>
+              <button class="action-btn outline" onclick="closeMissed('${key}')">Tutup</button>
+            </div>
+          </div>`;
+      });
+
+      // Week total completed km
+      const totalActual = wk.sessions.reduce((sum,_,si)=>{
+        const l=logs[`${wk.week}-${si}`]; return sum+(l?.completed?parseFloat(l.km||0):0);
+      },0);
+      const progressPct = wk.totalKm>0 ? Math.min(100,Math.round((totalActual/wk.totalKm)*100)) : 0;
+
+      wkEl.innerHTML = `
+        <div class="week-header" onclick="toggleWeek(${wk.week})">
+          <div class="wk-num">${String(wk.week).padStart(2,'0')}</div>
+          <div>
+            <div class="wk-title">${wk.title}</div>
+            <div class="wk-dates">${wk.start} – ${wk.end}</div>
+          </div>
+          <div class="wk-vol">${totalActual>0?totalActual.toFixed(1)+'/':''}${wk.totalKm} km</div>
+          <div class="wk-status ${statusClass}"></div>
+          <div class="wk-chevron" id="chev-${wk.week}">${isOpen?'▲':'▼'}</div>
+        </div>
+        <div class="week-body${isOpen?' open':''}">
+          <div class="week-prog">
+            <div class="wp-label"><span>Progress minggu ini</span><span>${totalActual.toFixed(1)} / ${wk.totalKm} km (${progressPct}%)</span></div>
+            <div class="wp-bar"><div class="wp-fill" style="width:${progressPct}%"></div></div>
+          </div>
+          ${sessionsHtml}
+          <div class="week-note"><strong>Catatan:</strong> ${wk.note}</div>
+        </div>`;
+      weekSection.appendChild(wkEl);
+    });
+
+    container.appendChild(weekSection);
+  });
+
+  updateProgress(logs);
+}
+
+// ─── LOG FUNCTIONS ────────────────────────────────────────────────────────────
+function toggleLog(e, key, week, si) {
+  e.stopPropagation();
+  const logs = loadLogs();
+  const log = logs[key];
+  // If already completed, clicking opens/closes the log panel to edit
+  const panel = document.getElementById(`log-${key}`);
+  if (!panel) return;
+  const isOpen = panel.classList.contains('open');
+  // Close all open log panels first
+  document.querySelectorAll('.log-panel.open').forEach(p => p.classList.remove('open'));
+  if (!isOpen) {
+    panel.classList.add('open');
+    // Pre-fill if already has data
+    if (log) {
+      const set = (id, val) => { const el=document.getElementById(id); if(el) el.value=val||''; };
+      set(`inp-km-${key}`, log.km); set(`inp-pace-${key}`, log.pace);
+      set(`inp-hr-${key}`, log.hr); set(`inp-cad-${key}`, log.cadence);
+      set(`inp-note-${key}`, log.note);
+    }
+  }
+}
+
+function closeLog(key) {
+  const panel = document.getElementById(`log-${key}`);
+  if (panel) panel.classList.remove('open');
+}
+
+function previewLog(key, target) {
+  const kmEl = document.getElementById(`inp-km-${key}`);
+  const resultEl = document.getElementById(`log-result-${key}`);
+  if (!kmEl || !resultEl) return;
+  const actual = parseFloat(kmEl.value);
+  if (isNaN(actual) || actual <= 0) { resultEl.classList.remove('show'); return; }
+  const diff = parseFloat((actual - target).toFixed(2));
+  if (diff < 0) {
+    resultEl.innerHTML = `Kurang <span class="deficit">${Math.abs(diff)} km</span> dari target ${target} km — akan diakumulasikan ke sesi berikutnya.`;
+  } else if (diff > 0) {
+    resultEl.innerHTML = `Lebih <span class="surplus">+${diff} km</span> dari target — kelebihan ini mengurangi akumulasi dari sesi sebelumnya.`;
+  } else {
+    resultEl.innerHTML = `<span class="ok">✓ Tepat target ${target} km!</span>`;
+  }
+  resultEl.classList.add('show');
+}
+
+function saveLog(key, week, si, target) {
+  const get = id => { const el=document.getElementById(id); return el?el.value.trim():''; };
+  const km = parseFloat(get(`inp-km-${key}`));
+  if (!km || km <= 0) { alert('Masukkan jarak aktual dulu.'); return; }
+  const logs = loadLogs();
+  logs[key] = {
+    completed: true,
+    km: km,
+    pace: get(`inp-pace-${key}`),
+    hr: get(`inp-hr-${key}`),
+    cadence: get(`inp-cad-${key}`),
+    note: get(`inp-note-${key}`),
+    savedAt: new Date().toISOString()
+  };
+  saveLogs(logs);
+  renderApp();
+  // Re-open the same week
+  state.openWeeks.add(week);
+  const body = document.querySelector(`#week-${week} .week-body`);
+  if (body) body.classList.add('open');
+  const chev = document.getElementById(`chev-${week}`);
+  if (chev) chev.textContent = '▲';
+}
+
+function toggleMissed(e, key) {
+  e.stopPropagation();
+  document.querySelectorAll('.missed-panel.show').forEach(p => { if(p.id!==`missed-${key}`) p.classList.remove('show'); });
+  document.getElementById(`missed-${key}`)?.classList.toggle('show');
+}
+function closeMissed(key) { document.getElementById(`missed-${key}`)?.classList.remove('show'); }
+
+function toggleWeek(weekNum) {
+  const body = document.querySelector(`#week-${weekNum} .week-body`);
+  const chev = document.getElementById(`chev-${weekNum}`);
+  if (!body) return;
+  const isOpen = body.classList.toggle('open');
+  if (chev) chev.textContent = isOpen?'▲':'▼';
+  if (isOpen) state.openWeeks.add(weekNum);
+  else state.openWeeks.delete(weekNum);
+}
+
+function showPhase(id) {
+  document.querySelectorAll('.phase-header').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.week-section').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.pnav').forEach((el,i) => el.classList.toggle('active', i+1===id));
+  document.getElementById(`phase-header-${id}`)?.classList.add('active');
+  document.getElementById(`phase-weeks-${id}`)?.classList.add('active');
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function updateProgress(logs) {
+  logs = logs || loadLogs();
+  const allWeeks = generateWeeks();
+  const totalKmTarget = allWeeks.reduce((s,w)=>s+w.totalKm,0);
+  const totalKmDone = allWeeks.reduce((s,w)=>
+    s+w.sessions.reduce((ss,_,si)=>{
+      const l=logs[`${w.week}-${si}`]; return ss+(l?.completed?parseFloat(l.km||0):0);
+    },0),0);
+  const weeksCompleted = allWeeks.filter(wk =>
+    wk.sessions.filter(s=>s.type!=='rest').every((_,si)=>logs[`${wk.week}-${si}`]?.completed)
+  ).length;
+  const pct = Math.round((weeksCompleted/26)*100);
+  const bar=document.getElementById('globalBar'), pctEl=document.getElementById('globalPct');
+  if(bar) bar.style.width=pct+'%';
+  if(pctEl) pctEl.textContent=`${weeksCompleted}/26 minggu · ${totalKmDone.toFixed(1)} km`;
+}
+
+renderApp();
+</script>
+</body>
+</html>
