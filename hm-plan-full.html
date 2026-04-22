@@ -1,0 +1,1136 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HM 2:30 Training Plan</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#f7f6f3; --surface:#fff; --surface2:#f0efe9; --border:rgba(0,0,0,0.08);
+  --border2:rgba(0,0,0,0.15); --text:#1a1a18; --muted:#6b6b66; --soft:#9c9c96;
+  --accent:#c84b0f; --accent-bg:#fdf0eb; --green:#2d6a2d; --green-bg:#edf5ed;
+  --blue:#1a4d8f; --blue-bg:#eaf1fb; --amber:#8a5800; --amber-bg:#fdf5e0;
+  --purple:#5a1a9a; --purple-bg:#f0ebfd; --red:#8a0000; --red-bg:#fdecea;
+  --teal:#1a6a5a; --teal-bg:#e6f4f1;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;}
+
+/* ── HEADER ── */
+.app-header{background:var(--text);padding:20px 20px 16px;position:sticky;top:0;z-index:200;}
+.hdr-inner{max-width:900px;margin:0 auto;display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+.hdr-title{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:2px;color:#f7f6f3;line-height:1;}
+.hdr-sub{font-size:11px;color:rgba(247,246,243,0.45);letter-spacing:1px;margin-top:2px;}
+.hdr-progress{margin-left:auto;text-align:right;}
+.hdr-prog-bar{width:140px;height:4px;background:rgba(255,255,255,0.15);border-radius:2px;overflow:hidden;margin-left:auto;margin-top:4px;}
+.hdr-prog-fill{height:100%;background:var(--accent);border-radius:2px;transition:width .5s;}
+.hdr-prog-txt{font-family:'DM Mono',monospace;font-size:11px;color:rgba(247,246,243,0.6);margin-top:3px;}
+
+/* ── HR ZONE BAR ── */
+.zone-bar{background:var(--surface);border-bottom:1px solid var(--border);padding:7px 16px;}
+.zone-bar-inner{max-width:900px;margin:0 auto;display:flex;gap:5px;align-items:center;flex-wrap:wrap;}
+.zone-pill{font-size:10px;padding:2px 8px;border-radius:3px;white-space:nowrap;font-family:'DM Mono',monospace;}
+.z1{background:#edf5ed;color:#2d6a2d;} .z2{background:#e6f4f1;color:#1a6a5a;}
+.z3{background:#fdf5e0;color:#7a4a1a;} .z4{background:#fdf0eb;color:#c84b0f;}
+.z5{background:#fdecea;color:#8a0000;}
+.zone-note{font-size:10px;color:var(--soft);margin-left:4px;}
+
+/* ── PHASE NAV ── */
+.phase-nav{background:var(--surface);border-bottom:1px solid var(--border);padding:0 16px;position:sticky;top:72px;z-index:190;}
+.phase-nav-inner{max-width:900px;margin:0 auto;display:flex;overflow-x:auto;gap:0;}
+.pnav{padding:10px 14px;font-size:12px;font-weight:500;color:var(--muted);border-bottom:2px solid transparent;cursor:pointer;white-space:nowrap;transition:all .2s;background:none;border-top:none;border-left:none;border-right:none;font-family:'DM Sans',sans-serif;}
+.pnav:hover{color:var(--text);}
+.pnav.active{color:var(--accent);border-bottom-color:var(--accent);}
+
+/* ── TABS ── */
+.tab-content{display:none;} .tab-content.active{display:block;}
+
+/* ── MAIN ── */
+.main{max-width:900px;margin:0 auto;padding:20px 16px 80px;}
+
+/* ── SETTINGS PANEL ── */
+.settings-panel{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:20px;}
+.settings-title{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:1px;color:var(--text);margin-bottom:16px;}
+.settings-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-bottom:16px;}
+.field{display:flex;flex-direction:column;gap:5px;}
+.field label{font-size:11px;letter-spacing:1px;color:var(--soft);text-transform:uppercase;}
+.field input,.field select{padding:8px 12px;border-radius:8px;border:1px solid var(--border2);font-size:13px;font-family:'DM Mono',monospace;color:var(--text);background:var(--surface2);outline:none;transition:border-color .15s;}
+.field input:focus,.field select:focus{border-color:var(--accent);}
+.btn-primary{padding:10px 20px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:opacity .15s;letter-spacing:.3px;}
+.btn-primary:hover{opacity:.88;}
+.btn-outline{padding:8px 16px;background:transparent;color:var(--accent);border:1px solid var(--accent);border-radius:8px;font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;}
+.btn-outline:hover{background:var(--accent-bg);}
+
+/* ── PHASE HEADER ── */
+.phase-header{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px 20px;margin-bottom:16px;}
+.ph-top{display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:14px;}
+.ph-badge{font-family:'Bebas Neue',sans-serif;font-size:12px;letter-spacing:2px;padding:3px 9px;border-radius:4px;}
+.ph-name{font-size:17px;font-weight:500;}
+.ph-period{font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;margin-top:2px;}
+.ph-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px;}
+.ph-stat{background:var(--surface2);border-radius:8px;padding:9px 12px;}
+.ph-stat-l{font-size:10px;letter-spacing:1px;color:var(--soft);text-transform:uppercase;margin-bottom:2px;}
+.ph-stat-v{font-size:15px;font-weight:500;}
+
+/* ── WEEK BLOCK ── */
+.week-block{background:var(--surface);border:1px solid var(--border);border-radius:12px;margin-bottom:10px;overflow:hidden;}
+.week-header{display:flex;align-items:center;gap:10px;padding:13px 16px;border-bottom:1px solid var(--border);cursor:pointer;user-select:none;transition:background .15s;}
+.week-header:hover{background:var(--surface2);}
+.wk-num{font-family:'Bebas Neue',sans-serif;font-size:20px;line-height:1;color:var(--soft);min-width:26px;}
+.wk-info{flex:1;}
+.wk-title{font-size:13px;font-weight:500;}
+.wk-dates{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);margin-top:1px;}
+.wk-meta{display:flex;align-items:center;gap:8px;}
+.wk-vol{font-family:'DM Mono',monospace;font-size:11px;color:var(--accent);}
+.wk-dot{width:7px;height:7px;border-radius:50%;}
+.wk-dot.done{background:var(--green);} .wk-dot.partial{background:var(--amber);} .wk-dot.pending{background:#d0cfc8;}
+.wk-chevron{font-size:12px;color:var(--soft);transition:transform .2s;}
+.week-body{display:none;padding:14px 16px;}
+.week-body.open{display:block;}
+
+/* ── WEEK PROGRESS ── */
+.wk-prog{margin-bottom:12px;}
+.wk-prog-labels{display:flex;justify-content:space-between;font-size:11px;color:var(--soft);margin-bottom:4px;}
+.wk-prog-bar{height:3px;background:var(--surface2);border-radius:2px;overflow:hidden;}
+.wk-prog-fill{height:100%;background:var(--green);border-radius:2px;transition:width .3s;}
+
+/* ── AUTO RESCHEDULE ALERT ── */
+.reschedule-alert{background:#fff8f0;border:1px solid rgba(200,75,15,.25);border-left:3px solid var(--accent);border-radius:0 8px 8px 0;padding:12px 14px;margin-bottom:12px;}
+.reschedule-alert-title{font-size:12px;font-weight:600;color:var(--accent);margin-bottom:4px;}
+.reschedule-alert-body{font-size:12px;color:var(--muted);line-height:1.6;}
+
+/* ── DAY ROW ── */
+.day-row{padding:10px 0;border-bottom:1px solid var(--border);}
+.day-row:last-child{border-bottom:none;padding-bottom:0;}
+.day-row.completed-row{background:linear-gradient(to right,rgba(45,106,45,.04),transparent);border-radius:6px;padding:10px 8px;}
+.day-row-top{display:grid;grid-template-columns:90px 1fr auto;gap:10px;align-items:start;}
+.day-col{}
+.day-name{font-size:11px;font-weight:600;color:var(--muted);letter-spacing:.5px;}
+.day-date{font-size:11px;color:var(--soft);font-family:'DM Mono',monospace;margin-top:1px;}
+.day-workout-title{font-size:13px;font-weight:500;margin-bottom:2px;}
+.day-workout-desc{font-size:12px;color:var(--muted);line-height:1.55;}
+.day-chips{display:flex;gap:4px;flex-wrap:wrap;margin-top:5px;}
+.chip{font-size:10px;padding:2px 6px;border-radius:3px;border:1px solid var(--border2);color:var(--muted);}
+.chip.deficit{background:var(--accent-bg);border-color:rgba(200,75,15,.3);color:var(--accent);}
+.chip.auto{background:var(--purple-bg);border-color:rgba(90,26,154,.3);color:var(--purple);}
+.day-actions{display:flex;flex-direction:column;gap:5px;align-items:flex-end;}
+.type-pill{font-size:10px;padding:2px 8px;border-radius:20px;font-weight:600;letter-spacing:.3px;white-space:nowrap;}
+.pill-easy{background:var(--green-bg);color:var(--green);}
+.pill-long{background:var(--blue-bg);color:var(--blue);}
+.pill-tempo{background:var(--amber-bg);color:var(--amber);}
+.pill-interval{background:var(--purple-bg);color:var(--purple);}
+.pill-rest{background:var(--surface2);color:var(--soft);}
+.pill-race{background:var(--red-bg);color:var(--red);}
+.pill-makeup{background:var(--teal-bg);color:var(--teal);}
+
+/* ── BUTTONS ── */
+.log-btn{font-size:10px;padding:4px 10px;border-radius:6px;border:1.5px solid var(--border2);background:var(--surface);color:var(--muted);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;white-space:nowrap;}
+.log-btn:hover{border-color:var(--green);color:var(--green);}
+.log-btn.done{background:var(--green-bg);border-color:var(--green);color:var(--green);font-weight:600;}
+.miss-btn{font-size:10px;padding:4px 10px;border-radius:6px;border:1px solid var(--border2);background:var(--surface);color:var(--muted);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;white-space:nowrap;}
+.miss-btn:hover{border-color:var(--accent);color:var(--accent);}
+
+/* ── LOG PANEL ── */
+.log-panel{overflow:hidden;max-height:0;transition:max-height .3s ease;}
+.log-panel.open{max-height:500px;}
+.log-panel-inner{margin-top:10px;padding:14px 16px;background:var(--green-bg);border:1px solid rgba(45,106,45,.2);border-radius:8px;}
+.log-panel-title{font-size:12px;font-weight:600;color:var(--green);margin-bottom:6px;}
+.log-target-info{font-size:11px;color:#4a7a4a;margin-bottom:10px;}
+.log-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;}
+.log-field{display:flex;flex-direction:column;gap:3px;}
+.log-label{font-size:10px;letter-spacing:1px;color:#4a7a4a;text-transform:uppercase;}
+.log-input{padding:7px 10px;border-radius:6px;border:1px solid rgba(45,106,45,.25);background:#fff;font-size:13px;font-family:'DM Mono',monospace;color:var(--text);outline:none;width:100%;transition:border-color .15s;}
+.log-input:focus{border-color:var(--green);}
+.log-input::placeholder{color:#9cbc9c;}
+.log-preview{font-size:12px;padding:8px 10px;background:#fff;border:1px solid rgba(45,106,45,.2);border-radius:6px;color:var(--muted);margin-bottom:8px;display:none;line-height:1.5;}
+.log-preview.show{display:block;}
+.deficit-txt{color:var(--accent);font-weight:600;}
+.surplus-txt{color:var(--green);font-weight:600;}
+.ok-txt{color:var(--green);font-weight:600;}
+.log-btns{display:flex;gap:8px;}
+.log-save{padding:6px 14px;background:var(--green);color:#fff;border:none;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:opacity .15s;}
+.log-save:hover{opacity:.85;}
+.log-cancel{padding:6px 12px;background:transparent;color:var(--muted);border:1px solid var(--border2);border-radius:6px;font-size:11px;cursor:pointer;font-family:'DM Sans',sans-serif;}
+.log-saved{margin-top:6px;padding:8px 10px;background:#fff;border:1px solid rgba(45,106,45,.2);border-radius:6px;font-size:11px;font-family:'DM Mono',monospace;color:var(--green);line-height:1.8;display:none;}
+.log-saved.show{display:block;}
+
+/* ── MISSED PANEL ── */
+.missed-panel{display:none;margin-top:8px;padding:12px 14px;background:var(--accent-bg);border:1px solid rgba(200,75,15,.2);border-radius:8px;}
+.missed-panel.show{display:block;}
+.missed-title{font-size:12px;font-weight:600;color:var(--accent);margin-bottom:6px;}
+.missed-body{font-size:12px;color:var(--text);line-height:1.6;margin-bottom:10px;}
+.missed-actions{display:flex;gap:8px;flex-wrap:wrap;}
+.maction-btn{font-size:11px;padding:5px 12px;border-radius:6px;border:1px solid var(--accent);background:var(--accent);color:#fff;cursor:pointer;font-family:'DM Sans',sans-serif;transition:opacity .15s;}
+.maction-btn.outline{background:transparent;color:var(--accent);}
+.maction-btn:hover{opacity:.85;}
+
+/* ── NUTRITION PANEL ── */
+.nutrition-section{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:16px;}
+.nutrition-title{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:1px;margin-bottom:4px;}
+.nutrition-sub{font-size:12px;color:var(--muted);margin-bottom:16px;}
+.nutr-tabs{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap;}
+.nutr-tab{padding:6px 14px;border-radius:20px;font-size:12px;font-weight:500;border:1px solid var(--border2);background:var(--surface2);color:var(--muted);cursor:pointer;transition:all .2s;}
+.nutr-tab.active{background:var(--text);color:#fff;border-color:var(--text);}
+.nutr-content{display:none;}
+.nutr-content.active{display:block;}
+.km-timeline{position:relative;padding-left:24px;}
+.km-timeline::before{content:'';position:absolute;left:8px;top:4px;bottom:4px;width:2px;background:linear-gradient(to bottom,var(--green),var(--accent),var(--red));border-radius:2px;}
+.km-item{position:relative;margin-bottom:14px;}
+.km-dot{position:absolute;left:-19px;top:5px;width:10px;height:10px;border-radius:50%;border:2px solid currentColor;background:#fff;}
+.km-label{font-family:'DM Mono',monospace;font-size:11px;font-weight:500;margin-bottom:3px;}
+.km-desc{font-size:12px;color:var(--muted);line-height:1.55;}
+.nutr-card{background:var(--surface2);border-radius:8px;padding:12px 14px;margin-bottom:8px;}
+.nutr-card-title{font-size:13px;font-weight:500;margin-bottom:4px;}
+.nutr-card-body{font-size:12px;color:var(--muted);line-height:1.6;}
+.food-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin-top:10px;}
+.food-item{background:var(--surface2);border-radius:8px;padding:10px 12px;border-left:3px solid var(--green);}
+.food-name{font-size:13px;font-weight:500;margin-bottom:2px;}
+.food-when{font-size:11px;color:var(--muted);}
+
+/* ── WEEK NOTE ── */
+.week-note{margin-top:12px;padding:10px 14px;background:var(--surface2);border-radius:8px;font-size:12px;color:var(--muted);line-height:1.6;border-left:3px solid var(--accent);}
+.week-note strong{color:var(--text);}
+
+/* ── MODAL ── */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:500;align-items:center;justify-content:center;padding:20px;}
+.modal-overlay.show{display:flex;}
+.modal{background:var(--surface);border-radius:14px;padding:24px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;}
+.modal-title{font-size:17px;font-weight:500;margin-bottom:16px;}
+.modal-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;}
+.modal-footer{display:flex;gap:8px;justify-content:flex-end;}
+
+/* ── EMPTY STATE ── */
+.empty-state{text-align:center;padding:40px 20px;color:var(--soft);}
+.empty-state-icon{font-size:40px;margin-bottom:12px;}
+.empty-state-title{font-size:16px;font-weight:500;color:var(--muted);margin-bottom:6px;}
+.empty-state-body{font-size:13px;line-height:1.6;}
+</style>
+</head>
+<body>
+
+<div class="app-header">
+  <div class="hdr-inner">
+    <div>
+      <div class="hdr-title">HM 2:30 · TRAINING</div>
+      <div class="hdr-sub" id="hdrSub">Loading...</div>
+    </div>
+    <div class="hdr-progress">
+      <div style="font-size:10px;color:rgba(247,246,243,.45);letter-spacing:1px;margin-bottom:3px;">PROGRESS</div>
+      <div class="hdr-prog-bar"><div class="hdr-prog-fill" id="globalBar" style="width:0%"></div></div>
+      <div class="hdr-prog-txt" id="globalPct">0 / 26 minggu</div>
+    </div>
+  </div>
+</div>
+
+<div class="zone-bar">
+  <div class="zone-bar-inner">
+    <span style="font-size:10px;color:var(--soft);margin-right:2px;letter-spacing:1px;">HR ZONE</span>
+    <span class="zone-pill z1">Z1 · 122–135</span>
+    <span class="zone-pill z2">Z2 · 136–145</span>
+    <span class="zone-pill z3">Z3 · 146–155</span>
+    <span class="zone-pill z4">Z4 · 156–165</span>
+    <span class="zone-pill z5">Z5 · 166–175</span>
+    <span class="zone-note">· Race pace 7:06 = Z4 · Easy/Long = Z2</span>
+  </div>
+</div>
+
+<div class="phase-nav">
+  <div class="phase-nav-inner">
+    <button class="pnav active" onclick="showTab('plan')">📋 Program</button>
+    <button class="pnav" onclick="showTab('settings')">⚙️ Pengaturan</button>
+    <button class="pnav" onclick="showTab('nutrition')">🍌 Nutrisi</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ PROGRAM TAB -->
+<div class="main">
+<div class="tab-content active" id="tab-plan">
+  <div id="planContainer"></div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ SETTINGS TAB -->
+<div class="tab-content" id="tab-settings">
+  <div class="settings-panel">
+    <div class="settings-title">Pengaturan Program</div>
+    <div class="settings-grid">
+      <div class="field">
+        <label>Tanggal Mulai</label>
+        <input type="date" id="cfg-startDate" value="2026-04-21">
+      </div>
+      <div class="field">
+        <label>Jumlah Minggu</label>
+        <input type="number" id="cfg-totalWeeks" value="26" min="8" max="52">
+      </div>
+      <div class="field">
+        <label>Volume Fase 1 (km/minggu)</label>
+        <input type="number" id="cfg-volPhase1" value="22" min="10" max="40">
+      </div>
+      <div class="field">
+        <label>Volume Fase 2–5 (km/minggu)</label>
+        <input type="number" id="cfg-volMain" value="30" min="20" max="70">
+      </div>
+      <div class="field">
+        <label>HRmax (bpm)</label>
+        <input type="number" id="cfg-hrmax" value="188" min="150" max="220">
+      </div>
+      <div class="field">
+        <label>Target Race Pace (mm:ss)</label>
+        <input type="text" id="cfg-racePace" value="7:06" placeholder="7:06">
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+      <button class="btn-primary" onclick="applySettings()">Terapkan & Generate Ulang</button>
+      <button class="btn-outline" onclick="resetAllLogs()">Reset Semua Log</button>
+    </div>
+    <div id="settingsFeedback" style="margin-top:10px;font-size:12px;color:var(--green);display:none;"></div>
+  </div>
+
+  <div class="settings-panel" style="margin-top:0;">
+    <div style="font-size:16px;font-weight:500;margin-bottom:12px;">Tentang Fitur</div>
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <div class="nutr-card">
+        <div class="nutr-card-title">📅 Ubah Tanggal Kapan Saja</div>
+        <div class="nutr-card-body">Ubah tanggal mulai dan tekan "Terapkan" — semua tanggal sesi akan menyesuaikan otomatis. Log latihan yang sudah masuk tetap tersimpan.</div>
+      </div>
+      <div class="nutr-card">
+        <div class="nutr-card-title">📏 Ubah Volume Mingguan</div>
+        <div class="nutr-card-body">Volume km per minggu bisa diubah sesuai kemampuan. Distribusi antar sesi (Selasa/Kamis/Sabtu-Minggu) otomatis menyesuaikan.</div>
+      </div>
+      <div class="nutr-card">
+        <div class="nutr-card-title">🔄 Auto Reschedule Hari Terlewat</div>
+        <div class="nutr-card-body">Tekan tombol "Terlewat?" pada sesi yang tidak bisa dijalankan. Program pengganti otomatis dibuat — bisa pilih pindah ke hari lain dalam minggu yang sama, atau tambahkan sesi makeup di minggu berikutnya.</div>
+      </div>
+      <div class="nutr-card">
+        <div class="nutr-card-title">➕ Akumulasi Kekurangan KM</div>
+        <div class="nutr-card-body">Jika jarak aktual kurang dari target, kekurangan otomatis ditambahkan ke sesi berikutnya sebagai badge "+X km akumulasi". Kelebihan jarak di sesi berikutnya otomatis mengurangi akumulasi.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ NUTRITION TAB -->
+<div class="tab-content" id="tab-nutrition">
+  <div class="nutrition-section">
+    <div class="nutrition-title">Panduan Nutrisi</div>
+    <div class="nutrition-sub">Saran konsumsi makanan & minuman untuk performa optimal — disesuaikan per jenis sesi dan jarak</div>
+    <div class="nutr-tabs">
+      <button class="nutr-tab active" onclick="showNutrTab('longrun')">Long Run</button>
+      <button class="nutr-tab" onclick="showNutrTab('easy')">Easy Run</button>
+      <button class="nutr-tab" onclick="showNutrTab('tempo')">Tempo / Interval</button>
+      <button class="nutr-tab" onclick="showNutrTab('daily')">Harian</button>
+      <button class="nutr-tab" onclick="showNutrTab('raceday')">Race Day</button>
+    </div>
+
+    <!-- LONG RUN -->
+    <div class="nutr-content active" id="nutr-longrun">
+      <div class="nutr-card" style="margin-bottom:14px;">
+        <div class="nutr-card-title">Kapan & Apa yang Dikonsumsi Saat Long Run</div>
+        <div class="nutr-card-body">Long run adalah sesi yang paling membutuhkan strategi nutrisi. Tubuh menyimpan glikogen untuk ~90 menit — setelah itu tanpa asupan, performa turun drastis ("bonking").</div>
+      </div>
+      <div class="km-timeline">
+        <div class="km-item">
+          <div class="km-dot" style="color:var(--green);border-color:var(--green)"></div>
+          <div class="km-label" style="color:var(--green)">H-2 jam sebelum lari</div>
+          <div class="km-desc"><strong>Sarapan utama:</strong> Nasi putih 1 porsi sedang + 2 telur + pisang. Atau roti gandum 2 lembar + selai kacang + 1 pisang. Hindari makanan tinggi serat atau lemak besar. Minum 400–500ml air.</div>
+        </div>
+        <div class="km-item">
+          <div class="km-dot" style="color:var(--teal);border-color:var(--teal)"></div>
+          <div class="km-label" style="color:var(--teal)">15 menit sebelum start</div>
+          <div class="km-desc"><strong>Pre-run boost:</strong> 1 gel energi atau 3–4 kurma atau 1 pisang kecil. Minum 200ml air. Ini "top off" glikogen terakhir.</div>
+        </div>
+        <div class="km-item">
+          <div class="km-dot" style="color:var(--blue);border-color:var(--blue)"></div>
+          <div class="km-label" style="color:var(--blue)">Km 0 — Start</div>
+          <div class="km-desc">Mulai sesi. Minum sedikit di tiap water station jika ada, atau bawa botol kecil 300ml untuk 0–8 km pertama.</div>
+        </div>
+        <div class="km-item">
+          <div class="km-dot" style="color:var(--amber);border-color:var(--amber)"></div>
+          <div class="km-label" style="color:var(--amber)">Km 6–8 (±45 menit)</div>
+          <div class="km-desc"><strong>Gel pertama atau pengganti:</strong> 1 gel energi (Gu, Maurten, Pocari gel) + 150–200ml air. Alternatif: 3 kurma + air. Ambil sambil tetap berlari pelan — jangan berhenti mendadak.</div>
+        </div>
+        <div class="km-item">
+          <div class="km-dot" style="color:var(--amber);border-color:var(--amber)"></div>
+          <div class="km-label" style="color:var(--amber)">Km 13–14 (±90 menit)</div>
+          <div class="km-desc"><strong>Gel kedua:</strong> 1 gel energi + 150–200ml air atau isotonic. Pada km ini glikogen mulai kritis — jangan skip. Jika long run >20 km, tambahkan gel ketiga di km 19–20.</div>
+        </div>
+        <div class="km-item">
+          <div class="km-dot" style="color:var(--purple);border-color:var(--purple)"></div>
+          <div class="km-label" style="color:var(--purple)">Setiap 20–25 menit</div>
+          <div class="km-desc"><strong>Hidrasi rutin:</strong> 150–200ml air atau minuman isotonic (Pocari Sweat, Gatorade). Untuk long run di atas 18 km, tambahkan elektrolit — bisa tablet atau minuman isotonic. Jangan tunggu haus.</div>
+        </div>
+        <div class="km-item">
+          <div class="km-dot" style="color:var(--red);border-color:var(--red)"></div>
+          <div class="km-label" style="color:var(--red)">Km terakhir — Finish</div>
+          <div class="km-desc"><strong>Recovery window 30 menit:</strong> Segera minum 300–400ml air/isotonic. Makan camilan protein + karbo: pisang + susu, atau roti + telur, atau protein bar. Ini "golden window" recovery terbaik.</div>
+        </div>
+      </div>
+      <div style="margin-top:16px;">
+        <div style="font-size:13px;font-weight:500;margin-bottom:10px;">Pilihan Gel & Pengganti Alami</div>
+        <div class="food-grid">
+          <div class="food-item">
+            <div class="food-name">Gel Energi</div>
+            <div class="food-when">Gu, Maurten, Huma — km 7 & 14</div>
+          </div>
+          <div class="food-item">
+            <div class="food-name">Kurma (3–4 biji)</div>
+            <div class="food-when">Alternatif gel alami — km 7 & 14</div>
+          </div>
+          <div class="food-item">
+            <div class="food-name">Pisang kecil</div>
+            <div class="food-when">Pre-run & recovery</div>
+          </div>
+          <div class="food-item">
+            <div class="food-name">Pocari Sweat</div>
+            <div class="food-when">Isotonic setiap 20–25 mnt</div>
+          </div>
+          <div class="food-item">
+            <div class="food-name">Chews / Blok</div>
+            <div class="food-when">Clif Bloks — km 7 & 14</div>
+          </div>
+          <div class="food-item">
+            <div class="food-name">Madu sachet</div>
+            <div class="food-when">1 sachet = pengganti gel — km 7</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- EASY RUN -->
+    <div class="nutr-content" id="nutr-easy">
+      <div class="nutr-card"><div class="nutr-card-title">Easy Run (5–12 km)</div>
+        <div class="nutr-card-body">Sesi easy tidak butuh banyak strategi nutrisi karena intensitas rendah dan durasi pendek. Fokus pada hidrasi cukup sebelum dan sesudah.</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px;margin-top:10px;">
+        <div class="nutr-card" style="border-left:3px solid var(--green);">
+          <div class="nutr-card-title">1–2 jam sebelum</div>
+          <div class="nutr-card-body">Makan ringan: 2 lembar roti + pisang atau nasi 1/2 porsi + lauk. Minum 300–400ml air. Jika pagi buta dan tidak sempat makan, cukup 1 pisang + air.</div>
+        </div>
+        <div class="nutr-card" style="border-left:3px solid var(--blue);">
+          <div class="nutr-card-title">Selama lari (jika &lt;10 km)</div>
+          <div class="nutr-card-body">Tidak perlu gel atau makanan. Cukup bawa air 300ml untuk diminum jika haus, terutama jika suhu di atas 28°C.</div>
+        </div>
+        <div class="nutr-card" style="border-left:3px solid var(--amber);">
+          <div class="nutr-card-title">Sesudah lari</div>
+          <div class="nutr-card-body">Minum 300–500ml air atau isotonic dalam 30 menit. Makan normal — tidak perlu recovery meal khusus untuk sesi easy pendek.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TEMPO / INTERVAL -->
+    <div class="nutr-content" id="nutr-tempo">
+      <div class="nutr-card"><div class="nutr-card-title">Tempo & Interval (Intensitas Tinggi)</div>
+        <div class="nutr-card-body">Sesi tempo dan interval membakar glikogen lebih cepat daripada easy run. Pre-loading karbo penting untuk performa maksimal.</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px;margin-top:10px;">
+        <div class="nutr-card" style="border-left:3px solid var(--green);">
+          <div class="nutr-card-title">2–3 jam sebelum</div>
+          <div class="nutr-card-body">Makan lengkap: nasi + protein + sayur. Atau pasta/roti gandum + telur. Hindari makanan tinggi lemak dan serat besar — lambat dicerna dan bisa menyebabkan kram perut saat interval.</div>
+        </div>
+        <div class="nutr-card" style="border-left:3px solid var(--amber);">
+          <div class="nutr-card-title">30 menit sebelum</div>
+          <div class="nutr-card-body">Opsional: 1 gel atau 2–3 kurma jika sesi tempo &gt;8 km. Minum 200–250ml air. Jangan makan terlalu banyak — perut penuh = tidak nyaman saat berlari cepat.</div>
+        </div>
+        <div class="nutr-card" style="border-left:3px solid var(--blue);">
+          <div class="nutr-card-title">Selama sesi (&gt;10 km)</div>
+          <div class="nutr-card-body">Minum air 150–200ml di warm-up dan cool-down. Pada sesi WU+interval panjang (&gt;10 km, &gt;60 mnt), bisa ambil 1 gel di tengah sesi.</div>
+        </div>
+        <div class="nutr-card" style="border-left:3px solid var(--purple);">
+          <div class="nutr-card-title">Sesudah sesi — Recovery Window</div>
+          <div class="nutr-card-body"><strong>Penting:</strong> Dalam 30 menit setelah selesai, konsumsi protein + karbo. Pilihan: susu coklat (rasio karbo:protein ~4:1 ideal), atau nasi + ayam, atau protein shake + pisang. Ini kritis untuk rebuilding otot.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- HARIAN -->
+    <div class="nutr-content" id="nutr-daily">
+      <div class="nutr-card"><div class="nutr-card-title">Nutrisi Harian untuk Runner</div>
+        <div class="nutr-card-body">Nutrisi bukan hanya soal apa yang dimakan sebelum lari — tapi pola makan sepanjang hari yang mendukung pemulihan dan adaptasi tubuh.</div>
+      </div>
+      <div class="food-grid" style="margin-top:12px;">
+        <div class="food-item" style="border-left-color:var(--amber);">
+          <div class="food-name">Karbohidrat</div>
+          <div class="food-when">Nasi, kentang, pasta, oat, pisang — sumber energi utama lari</div>
+        </div>
+        <div class="food-item" style="border-left-color:var(--blue);">
+          <div class="food-name">Protein</div>
+          <div class="food-when">Ayam, ikan, telur, tahu/tempe, susu — rebuild otot setelah latihan</div>
+        </div>
+        <div class="food-item" style="border-left-color:var(--green);">
+          <div class="food-name">Sayur & Buah</div>
+          <div class="food-when">Antioksidan untuk recovery — bayam, brokoli, jeruk, semangka</div>
+        </div>
+        <div class="food-item" style="border-left-color:var(--purple);">
+          <div class="food-name">Lemak Sehat</div>
+          <div class="food-when">Alpukat, kacang, minyak zaitun — hormon dan sendi sehat</div>
+        </div>
+        <div class="food-item" style="border-left-color:var(--teal);">
+          <div class="food-name">Air Putih</div>
+          <div class="food-when">2.5–3 liter/hari pada hari latihan — lebih banyak jika berkeringat</div>
+        </div>
+        <div class="food-item" style="border-left-color:var(--red);">
+          <div class="food-name">Hindari</div>
+          <div class="food-when">Alkohol, gorengan berlebih, minuman manis tinggi — memperlambat recovery</div>
+        </div>
+      </div>
+      <div class="nutr-card" style="margin-top:12px;">
+        <div class="nutr-card-title">Carbohydrate Loading — 2–3 Hari Sebelum Race</div>
+        <div class="nutr-card-body">Tingkatkan porsi karbo 20–25%: nasi, pasta, roti gandum, pisang, kentang. Kurangi serat dan lemak. Ini mengisi cadangan glikogen otot ke level maksimum untuk race day. Minum lebih banyak air dari biasa.</div>
+      </div>
+    </div>
+
+    <!-- RACE DAY -->
+    <div class="nutr-content" id="nutr-raceday">
+      <div class="nutr-card"><div class="nutr-card-title">Strategi Nutrisi Race Day — HM 21.1 km</div>
+        <div class="nutr-card-body">Hari paling penting. Jangan coba produk baru di race day — gunakan hanya yang sudah dilatih selama long run.</div>
+      </div>
+      <div class="km-timeline" style="margin-top:14px;">
+        <div class="km-item">
+          <div class="km-dot" style="color:var(--green);border-color:var(--green)"></div>
+          <div class="km-label" style="color:var(--green)">Malam sebelum (H-1)</div>
+          <div class="km-desc">Makan malam kaya karbo: nasi + ayam + sayur atau pasta. Tidak perlu makan berlebihan — cukup porsi normal + sedikit lebih besar. Tidur minimal jam 21:00.</div>
+        </div>
+        <div class="km-item">
+          <div class="km-dot" style="color:var(--teal);border-color:var(--teal)"></div>
+          <div class="km-label" style="color:var(--teal)">3 jam sebelum start</div>
+          <div class="km-desc">Sarapan besar: nasi + telur + pisang, atau oatmeal + madu + buah. Minum 500ml air. Ini satu-satunya kesempatan makan besar sebelum race.</div>
+        </div>
+        <div class="km-item">
+          <div class="km-dot" style="color:var(--blue);border-color:var(--blue)"></div>
+          <div class="km-label" style="color:var(--blue)">1 jam sebelum start</div>
+          <div class="km-desc">1 pisang atau 3 kurma. Minum 250ml air. Bisa minum kopi hitam jika terbiasa — kafein terbukti meningkatkan performa lari 3–5%.</div>
+        </div>
+        <div class="km-item">
+          <div class="km-dot" style="color:var(--amber);border-color:var(--amber)"></div>
+          <div class="km-label" style="color:var(--amber)">15 menit sebelum start</div>
+          <div class="km-desc">1 gel energi + 150ml air. Ini "priming" terakhir untuk glikogen darah.</div>
+        </div>
+        <div class="km-item">
+          <div class="km-dot" style="color:var(--accent);border-color:var(--accent)"></div>
+          <div class="km-label" style="color:var(--accent)">Km 7 — Gel pertama race</div>
+          <div class="km-desc">1 gel energi + minum air di water station berikutnya. Ambil sambil jalan 5–10 detik agar tidak tersedak. Timing ini kritis untuk 10 km kedua.</div>
+        </div>
+        <div class="km-item">
+          <div class="km-dot" style="color:var(--red);border-color:var(--red)"></div>
+          <div class="km-label" style="color:var(--red)">Km 14 — Gel kedua race</div>
+          <div class="km-desc">1 gel energi + minum isotonic di water station. Ini adalah "fuel" untuk 7 km terakhir. Jangan skip meski merasa masih kuat.</div>
+        </div>
+        <div class="km-item">
+          <div class="km-dot" style="color:var(--green);border-color:var(--green)"></div>
+          <div class="km-label" style="color:var(--green)">Finish Line & Recovery</div>
+          <div class="km-desc">Langsung minum isotonic + air. Dalam 30 menit: makan pisang + protein bar atau makanan recovery yang sudah disiapkan. Jangan langsung makan makanan berat.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<script>
+// ═══════════════════════════════════ STORAGE
+const S='hm_v3_';
+const load=k=>{try{return JSON.parse(localStorage.getItem(S+k))||null}catch{return null}};
+const save=(k,v)=>{try{localStorage.setItem(S+k,JSON.stringify(v))}catch{}};
+
+// ═══════════════════════════════════ CONFIG
+let CFG = load('cfg') || {
+  startDate:'2026-04-21', totalWeeks:26,
+  volPhase1:22, volMain:30, hrmax:188, racePace:'7:06'
+};
+
+function saveConfig(){
+  CFG.startDate = document.getElementById('cfg-startDate').value;
+  CFG.totalWeeks = parseInt(document.getElementById('cfg-totalWeeks').value)||26;
+  CFG.volPhase1 = parseInt(document.getElementById('cfg-volPhase1').value)||22;
+  CFG.volMain = parseInt(document.getElementById('cfg-volMain').value)||30;
+  CFG.hrmax = parseInt(document.getElementById('cfg-hrmax').value)||188;
+  CFG.racePace = document.getElementById('cfg-racePace').value||'7:06';
+  save('cfg', CFG);
+}
+function loadConfigUI(){
+  document.getElementById('cfg-startDate').value = CFG.startDate;
+  document.getElementById('cfg-totalWeeks').value = CFG.totalWeeks;
+  document.getElementById('cfg-volPhase1').value = CFG.volPhase1;
+  document.getElementById('cfg-volMain').value = CFG.volMain;
+  document.getElementById('cfg-hrmax').value = CFG.hrmax;
+  document.getElementById('cfg-racePace').value = CFG.racePace;
+}
+function applySettings(){
+  saveConfig();
+  const fb=document.getElementById('settingsFeedback');
+  fb.style.display='block';
+  fb.textContent='✓ Pengaturan diterapkan — program diperbarui.';
+  setTimeout(()=>fb.style.display='none',3000);
+  renderPlan();
+  showTab('plan');
+}
+function resetAllLogs(){
+  if(!confirm('Reset semua log latihan? Data yang sudah dimasukkan akan hilang.')) return;
+  Object.keys(localStorage).filter(k=>k.startsWith(S+'log_')||k.startsWith(S+'missed_')).forEach(k=>localStorage.removeItem(k));
+  renderPlan();
+}
+
+// ═══════════════════════════════════ DATE HELPERS
+function addDays(dateStr, n){
+  const d=new Date(dateStr); d.setDate(d.getDate()+n); return d;
+}
+function fmtDate(d){
+  const months=['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Ags','Sep','Okt','Nov','Des'];
+  return `${d.getDate()} ${months[d.getMonth()]}`;
+}
+function dayName(d){
+  return ['MIN','SEN','SEL','RAB','KAM','JUM','SAB'][d.getDay()];
+}
+
+// ═══════════════════════════════════ DEFICIT CALCULATION
+function computeDeficit(upToWeek, upToSi){
+  let deficit=0;
+  const allW=generateAllWeeks();
+  for(const wk of allW){
+    for(let si=0;si<wk.sessions.length;si++){
+      if(wk.week===upToWeek && si===upToSi) return Math.max(0, parseFloat(deficit.toFixed(2)));
+      const key=`${wk.week}-${si}`;
+      const log=load(`log_${key}`);
+      const s=wk.sessions[si];
+      if(!log||!log.completed||s.type==='rest') continue;
+      const target=parseFloat(s.targetKm||0);
+      const actual=parseFloat(log.km||0);
+      const diff=actual-target;
+      if(diff<0) deficit+=Math.abs(diff);
+      else deficit=Math.max(0,deficit-diff);
+    }
+  }
+  return Math.max(0, parseFloat(deficit.toFixed(2)));
+}
+
+// ═══════════════════════════════════ PROGRAM GENERATION
+function phaseFor(w,total){
+  const r=w/total;
+  if(r<=0.15) return 1;
+  if(r<=0.31) return 2;
+  if(r<=0.46) return 3;
+  if(r<=0.62) return 4;
+  if(r<=0.81) return 5;
+  return 6;
+}
+
+const PHASE_META=[
+  {id:1,name:"Aerobic Base",focus:"Z2 easy (HR 136–145)",badgeColor:"#edf5ed",badgeText:"#2d6a2d"},
+  {id:2,name:"Aerobic Development",focus:"Z2 + Tempo Z3 (146–155)",badgeColor:"#eaf1fb",badgeText:"#1a4d8f"},
+  {id:3,name:"Lactate Threshold",focus:"Threshold Z3–Z4 + Race pace",badgeColor:"#fdf5e0",badgeText:"#7a4a1a"},
+  {id:4,name:"VO2max & Speed",focus:"Interval Z5 (166–175) + Race pace Z4",badgeColor:"#f0ebfd",badgeText:"#5a1a9a"},
+  {id:5,name:"Race Simulation",focus:"Race pace Z4 (156–165) + Simulasi",badgeColor:"#fdecea",badgeText:"#8a0000"},
+  {id:6,name:"Taper & Race",focus:"Freshen up + Race Day",badgeColor:"#f0edf8",badgeText:"#1a1a6a"},
+];
+
+function getSessionsForWeek(w, phase, totalWeeks, v1, vMain, weekStart){
+  const isLastWeek = w===totalWeeks;
+  const vol = phase===1 ? v1 : vMain;
+
+  // Distribute: Tue=35%, Thu=25%, Sat/Sun=40% of weekly volume
+  const tuKm = Math.round(vol*0.35);
+  const thuKm = Math.round(vol*0.25);
+  const longKm = vol - tuKm - thuKm;
+
+  const tue=addDays(weekStart,2), thu=addDays(weekStart,4), sat=addDays(weekStart,6), sun=addDays(weekStart,7);
+
+  if(isLastWeek){
+    // Race week
+    return [
+      {day:'SEL',date:tue,type:'easy',targetKm:3,
+       title:'Easy Shakeout 3 km',
+       desc:'Sangat santai. Z2 (136–145). Hanya untuk jaga kaki bergerak sebelum race.',
+       chips:['3 km','Z2: HR 136–145','Sangat santai']},
+      {day:'KAM',date:thu,type:'rest',targetKm:0,
+       title:'Rest Total + Persiapan Perlengkapan',
+       desc:'Cek sepatu race, bib, pakaian, gel. Siapkan sarapan untuk besok. Tidur lebih awal.',
+       chips:['Istirahat penuh','Cek gear race']},
+      {day:'SAB',date:sat,type:'easy',targetKm:3,
+       title:'Shakeout Run 3 km (H-1)',
+       desc:'3 km sangat santai + 4 strides pendek. Makan malam karbo. Tidur jam 21:00.',
+       chips:['3 km','4 strides','Carbo loading']},
+      {day:'MIN — RACE',date:sun,type:'race',targetKm:21.1,
+       title:'🏁 HALF MARATHON — TARGET 2:30:00',
+       desc:`Start ${CFG.racePace}/km di 5 km pertama → build ke ${CFG.racePace} di km 5–16 → habiskan semua km 16–21. Gel km 7 dan 14.`,
+       chips:['21.1 km',`Start: ${CFG.racePace}/km`,'Gel km 7 & 14','Percayai prosesnya']}
+    ];
+  }
+
+  // Recovery weeks (every 4th week of non-last phase)
+  const wInPhase = w - Math.round((phaseFor(w,totalWeeks)-1)*(totalWeeks/6));
+  const isRecovery = (w%4===0) && phase < 6;
+  const recFactor = isRecovery ? 0.75 : 1;
+  const rTu = Math.round(tuKm*recFactor);
+  const rThu = Math.round(thuKm*recFactor);
+  const rLong = Math.round(longKm*recFactor);
+
+  const sessions = [];
+
+  if(phase===1){
+    sessions.push(
+      {day:'SEL',date:tue,type:'easy',targetKm:rTu,
+       title:`Easy Run ${rTu} km + Cadence Drill`,
+       desc:isRecovery?`Recovery week — HR di Z2 (136–145 bpm). Tidak ada drill.`:`Jaga HR di Z2 (136–145 bpm). Pace estimasi 8:30–9:00/km. Cadence drill: 4×1 mnt @ 152 spm di km terakhir.`,
+       chips:[`${rTu} km`,'Z2: HR 136–145','Pace 8:30–9:00','Cadence drill']},
+      {day:'KAM',date:thu,type:'easy',targetKm:rThu,
+       title:`Easy Run ${rThu} km + Strides`,
+       desc:`HR di Z2 (136–145). Di akhir: 4×100m strides — akselerasi bertahap, recovery 60 dtk jalan.`,
+       chips:[`${rThu} km`,'Z2: HR 136–145','4×100m strides']},
+      {day:'SAB/MIN',date:sat,type:'long',targetKm:rLong,
+       title:`Long Run ${rLong} km`,
+       desc:isRecovery?`Recovery week — sangat santai, Z2. Bawa minum 500ml.`:`Pace 8:30–9:00/km. Z2 (136–145) sepanjang waktu. Bawa minum. Gel jika >10 km.`,
+       chips:[`${rLong} km`,'Z2: HR 136–145','Pace 8:30–9:00','Bawa minum']}
+    );
+  } else if(phase===2){
+    const tempoKm = Math.round(rTu*0.5);
+    sessions.push(
+      {day:'SEL',date:tue,type:isRecovery?'easy':'tempo',targetKm:rTu,
+       title:isRecovery?`Easy Run ${rTu} km`:`Tempo Run ${rTu} km`,
+       desc:isRecovery?`Recovery — Z2 (136–145).`:`2 km WU Z2 + ${tempoKm} km @ Z3 (146–155, pace 7:45–8:10) + sisa easy Z2.`,
+       chips:[`${rTu} km`,isRecovery?'Z2: HR 136–145':`${tempoKm} km @ Z3`,'HR 146–155']},
+      {day:'KAM',date:thu,type:'easy',targetKm:rThu,
+       title:`Easy Run ${rThu} km + Strides`,
+       desc:`Recovery Z2 (136–145) dari tempo Selasa. 4×100m strides di akhir.`,
+       chips:[`${rThu} km`,'Z2: HR 136–145','4×100m strides']},
+      {day:'SAB/MIN',date:sat,type:'long',targetKm:rLong,
+       title:`Long Run ${rLong} km`,
+       desc:isRecovery?`Santai Z2.`:`${rLong-2} km Z2 + 2 km @ Z3 (146–155). Gel di km ${Math.round(rLong/2)}.`,
+       chips:[`${rLong} km`,'Z2 + finish Z3','Gel km '+Math.round(rLong/2)]}
+    );
+  } else if(phase===3){
+    const iKm = Math.round(rTu*0.6);
+    sessions.push(
+      {day:'SEL',date:tue,type:isRecovery?'easy':'interval',targetKm:rTu,
+       title:isRecovery?`Easy Run ${rTu} km`:`Threshold Interval ${rTu} km`,
+       desc:isRecovery?`Recovery Z2.`:`2 km WU Z2 + 3×${Math.round(iKm/3)} km @ Z3–Z4 (146–165, 7:30–7:45) · Rec 90 dtk jogging + 2 km CD Z2.`,
+       chips:[`${rTu} km`,isRecovery?'Z2':'Z3–Z4 interval','WU+CD termasuk']},
+      {day:'KAM',date:thu,type:isRecovery?'easy':'tempo',targetKm:rThu,
+       title:isRecovery?`Easy ${rThu} km`:`Progressif Tempo ${rThu} km`,
+       desc:isRecovery?`Santai Z2.`:`2 km easy Z2 → ${rThu-2} km @ Z3 (146–155, 7:30–7:50) → sisa easy Z2. Pace naik bertahap.`,
+       chips:[`${rThu} km`,isRecovery?'Z2':'Z3: HR 146–155','Progressif']},
+      {day:'SAB/MIN',date:sat,type:'long',targetKm:rLong,
+       title:`Long Run ${rLong} km`,
+       desc:isRecovery?`Santai Z2.`:`${rLong-3} km Z2 + 3 km @ race pace ${CFG.racePace} (Z4: 156–165). Gel km ${Math.round(rLong/3)} & ${Math.round(rLong*2/3)}.`,
+       chips:[`${rLong} km`,isRecovery?'Z2':'3 km race pace Z4','Gel 2x']}
+    );
+  } else if(phase===4){
+    const sets = Math.min(3+Math.round((w-(totalWeeks*0.46))*0.5),7);
+    sessions.push(
+      {day:'SEL',date:tue,type:isRecovery?'easy':'interval',targetKm:rTu,
+       title:isRecovery?`Easy Run ${rTu} km`:`VO2max Interval ${rTu} km`,
+       desc:isRecovery?`Recovery Z2.`:`2 km WU Z2 + ${sets}×1000m @ Z5 (166–175, 6:10–6:30) · Rec 90 dtk jogging + 2 km CD Z2.`,
+       chips:[`${rTu} km`,isRecovery?'Z2':`${sets}×1000m Z5`,'HR 166–175']},
+      {day:'KAM',date:thu,type:isRecovery?'easy':'tempo',targetKm:rThu,
+       title:isRecovery?`Easy ${rThu} km + Strides`:`Race Pace Run ${rThu} km`,
+       desc:isRecovery?`Santai Z2 + 4×100m strides.`:`1 km WU Z2 + ${rThu-2} km @ race pace ${CFG.racePace} (Z4: 156–165) + 1 km CD Z2.`,
+       chips:[`${rThu} km`,isRecovery?'Z2':'Z4: HR 156–165',`Race pace ${CFG.racePace}`]},
+      {day:'SAB/MIN',date:sat,type:'long',targetKm:rLong,
+       title:`Long Run ${rLong} km`,
+       desc:isRecovery?`Santai Z2.`:`${rLong-5} km Z2 + 5 km @ Z4 race feel (156–165, ${CFG.racePace}). Gel km ${Math.round(rLong/3)} & ${Math.round(rLong*2/3)}.`,
+       chips:[`${rLong} km`,isRecovery?'Z2':'5 km Z4 race feel','Gel 2x']}
+    );
+  } else if(phase===5){
+    const isPeak = Math.round(w - totalWeeks*0.62) === Math.round((totalWeeks*0.81-totalWeeks*0.62)/2);
+    sessions.push(
+      {day:'SEL',date:tue,type:isPeak?'interval':'tempo',targetKm:rTu,
+       title:isPeak?`Race Pace Interval ${rTu} km`:`Tempo Run ${rTu} km`,
+       desc:isPeak?`2 km WU Z2 + 2×4 km @ race pace ${CFG.racePace} (Z4: 156–165, rec 3 mnt jalan) + 2 km CD.`:`2 km WU Z2 + ${rTu-4} km @ Z3–Z4 (146–165, 7:20–7:30) + 2 km CD Z2.`,
+       chips:[`${rTu} km`,'Z4: HR 156–165',`Race pace ${CFG.racePace}`]},
+      {day:'KAM',date:thu,type:'easy',targetKm:rThu,
+       title:`Easy Run ${rThu} km + Strides`,
+       desc:`Z2 (136–145) recovery dari interval. 4×100m strides cadence 168 spm.`,
+       chips:[`${rThu} km`,'Z2: HR 136–145','Strides 4×100m']},
+      {day:'SAB/MIN',date:sat,type:'long',targetKm:rLong,
+       title:isPeak?`PEAK Long Run ${rLong} km`:`Long Run ${rLong} km`,
+       desc:isPeak?`${rLong-7} km Z2 + 7 km @ race pace ${CFG.racePace} (Z4). Gel km 7, 14, 19. Pakai sepatu race.`:`${rLong-5} km Z2 + 5 km @ Z4 race pace. Gel km ${Math.round(rLong/3)} & ${Math.round(rLong*2/3)}.`,
+       chips:[`${rLong} km`,isPeak?'Sepatu race':'Z2+Z4',isPeak?'Gel 3x':'Gel 2x']}
+    );
+  } else {
+    // Phase 6 taper
+    const taperFac = Math.max(0.3, 1 - ((w - Math.round(totalWeeks*0.81))/Math.round(totalWeeks*0.19))*0.7);
+    const tTu = Math.max(3, Math.round(tuKm*taperFac));
+    const tThu = Math.max(2, Math.round(thuKm*taperFac));
+    const tLong = Math.max(8, Math.round(longKm*taperFac));
+    sessions.push(
+      {day:'SEL',date:tue,type:'easy',targetKm:tTu,
+       title:`Easy Run ${tTu} km`,
+       desc:`Z2 (136–145) + 4×100m strides untuk jaga neuromuscular sharpness.`,
+       chips:[`${tTu} km`,'Z2','Strides 4×100m']},
+      {day:'KAM',date:thu,type:'tempo',targetKm:tThu,
+       title:`Tempo Pendek ${tThu} km`,
+       desc:`1 km WU + ${tThu-2} km @ Z3–Z4 (146–165, 7:15–7:30) + 1 km CD. Hanya untuk jaga ketajaman.`,
+       chips:[`${tThu} km`,'Z3–Z4','Pendek & tajam']},
+      {day:'SAB/MIN',date:sat,type:'long',targetKm:tLong,
+       title:`Long Run ${tLong} km`,
+       desc:`${tLong} km santai @ Z2. Tidak ada effort berat. Biarkan tubuh recovery.`,
+       chips:[`${tLong} km`,'Z2','Santai total']}
+    );
+  }
+
+  return sessions;
+}
+
+function generateAllWeeks(){
+  const start=CFG.startDate;
+  const total=CFG.totalWeeks;
+  const v1=CFG.volPhase1, vM=CFG.volMain;
+  const weeks=[];
+  for(let w=1;w<=total;w++){
+    const weekStart=addDays(start,(w-1)*7);
+    const phase=phaseFor(w,total);
+    const sessions=getSessionsForWeek(w,phase,total,v1,vM,weekStart);
+    const totalKm=sessions.reduce((s,x)=>s+(x.targetKm||0),0);
+    const weekEnd=addDays(start,w*7-1);
+    weeks.push({week:w,phase,weekStart:fmtDate(weekStart),weekEnd:fmtDate(weekEnd),sessions,totalKm});
+  }
+  return weeks;
+}
+
+// ═══════════════════════════════════ MISSED RESCHEDULE
+function getMissedProgram(wk, si, session){
+  const t=session.type;
+  if(t==='rest') return 'Tidak perlu reschedule — hari istirahat.';
+  const km=session.targetKm||0;
+  const dayNames={easy:'easy run',tempo:'tempo run',interval:'interval',long:'long run'};
+  const sName=dayNames[t]||t;
+  return [
+    `<strong>Opsi 1 — Pindah dalam minggu ini:</strong> Lakukan ${sName} ${km} km di hari lain yang tersedia (misal Jumat atau Rabu). Tetap jaga zona HR yang sama.`,
+    `<strong>Opsi 2 — Sesi makeup minggu depan:</strong> Klik "Jadwal Makeup" di bawah — program makeup otomatis ditambahkan di Senin minggu berikutnya sebagai sesi tambahan.`,
+    `<strong>Opsi 3 — Lewati sepenuhnya:</strong> Jika tidak memungkinkan sama sekali, lewati. Kekurangan ${km} km akan diakumulasikan ke sesi berikutnya secara otomatis.`
+  ].join('<br><br>');
+}
+
+// ═══════════════════════════════════ RENDER
+let openWeeks=new Set([1]);
+
+function renderPlan(){
+  const allWeeks=generateAllWeeks();
+  const container=document.getElementById('planContainer');
+  container.innerHTML='';
+
+  // Group by phase
+  const phases={};
+  allWeeks.forEach(wk=>{
+    if(!phases[wk.phase]) phases[wk.phase]=[];
+    phases[wk.phase].push(wk);
+  });
+
+  Object.entries(phases).forEach(([pid,weeks])=>{
+    pid=parseInt(pid);
+    const meta=PHASE_META.find(p=>p.id===pid);
+    const firstWk=weeks[0], lastWk=weeks[weeks.length-1];
+
+    // Phase header
+    const phEl=document.createElement('div');
+    phEl.className='phase-header';
+    const phVol = pid===1 ? `${CFG.volPhase1} km/minggu` : pid===6 ? 'Turun bertahap' : `${CFG.volMain} km/minggu`;
+    phEl.innerHTML=`
+      <div class="ph-top">
+        <span class="ph-badge" style="background:${meta.badgeColor};color:${meta.badgeText}">FASE ${pid}</span>
+        <div>
+          <div class="ph-name">${meta.name}</div>
+          <div class="ph-period">${firstWk.weekStart} – ${lastWk.weekEnd} · Minggu ${firstWk.week}–${lastWk.week}</div>
+        </div>
+      </div>
+      <div class="ph-stats">
+        <div class="ph-stat"><div class="ph-stat-l">Volume</div><div class="ph-stat-v">${phVol}</div></div>
+        <div class="ph-stat"><div class="ph-stat-l">Minggu</div><div class="ph-stat-v">${weeks.length} minggu</div></div>
+        <div class="ph-stat"><div class="ph-stat-l">Fokus</div><div class="ph-stat-v" style="font-size:12px">${meta.focus}</div></div>
+      </div>`;
+    container.appendChild(phEl);
+
+    // Weeks
+    weeks.forEach(wk=>{
+      const wkEl=document.createElement('div');
+      wkEl.className='week-block';
+      wkEl.id=`week-${wk.week}`;
+
+      const logs=wk.sessions.map((_,si)=>load(`log_${wk.week}-${si}`));
+      const missedFlags=wk.sessions.map((_,si)=>load(`missed_${wk.week}-${si}`));
+      const completedCount=logs.filter((l,si)=>l&&l.completed&&wk.sessions[si].type!=='rest').length;
+      const totalTraining=wk.sessions.filter(s=>s.type!=='rest').length;
+      const actualKm=logs.reduce((s,l)=>s+(l&&l.completed?parseFloat(l.km||0):0),0);
+      const progPct=wk.totalKm>0?Math.min(100,Math.round((actualKm/wk.totalKm)*100)):0;
+      const dotClass=completedCount===0?'pending':completedCount===totalTraining?'done':'partial';
+      const isOpen=openWeeks.has(wk.week);
+
+      // Check for makeup sessions (stored separately)
+      const makeupSessions=load(`makeup_${wk.week}`)||[];
+
+      // Sessions HTML
+      let sessionsHtml='';
+
+      // Add reschedule alert if there are makeup sessions
+      if(makeupSessions.length>0){
+        sessionsHtml+=`<div class="reschedule-alert">
+          <div class="reschedule-alert-title">📋 Sesi Makeup Terjadwal (${makeupSessions.length} sesi)</div>
+          <div class="reschedule-alert-body">${makeupSessions.map((m,i)=>
+            `<strong>${m.originalTitle}</strong> — ${m.scheduledDay} ${fmtDate(new Date(m.scheduledDate))} · ${m.targetKm} km`
+          ).join('<br>')}</div>
+        </div>`;
+      }
+
+      wk.sessions.forEach((s,si)=>{
+        const key=`${wk.week}-${si}`;
+        const log=logs[si]||{};
+        const missed=missedFlags[si];
+        const isDone=!!log.completed;
+        const isRace=s.type==='race';
+        const isRest=s.type==='rest';
+
+        // Deficit for this session
+        const deficit=(!isRest&&!isDone)?computeDeficit(wk.week,si):0;
+        const effTarget=parseFloat((parseFloat(s.targetKm||0)+deficit).toFixed(2));
+
+        const deficitChip=deficit>0?`<span class="chip deficit">+${deficit} km akumulasi</span>`:'';
+
+        const savedSummary=isDone?`
+          <div class="log-saved show" id="summary-${key}">
+            ✓ ${log.km} km · Pace ${log.pace||'—'} · HR ${log.hr||'—'} bpm · Cadence ${log.cadence||'—'} spm${log.note?` · ${log.note}`:''}
+          </div>`:
+          `<div class="log-saved" id="summary-${key}"></div>`;
+
+        sessionsHtml+=`
+          <div class="day-row${isDone?' completed-row':''}" id="row-${key}">
+            <div class="day-row-top">
+              <div class="day-col">
+                <div class="day-name">${s.day}</div>
+                <div class="day-date">${fmtDate(s.date)}</div>
+              </div>
+              <div>
+                <div class="day-workout-title" style="${isDone?'opacity:.5;text-decoration:line-through;':''}">${s.title}</div>
+                ${!isDone?`<div class="day-workout-desc">${s.desc}</div>`:''}
+                <div class="day-chips">
+                  ${s.chips.map(c=>`<span class="chip">${c}</span>`).join('')}
+                  ${deficitChip}
+                </div>
+                ${savedSummary}
+              </div>
+              <div class="day-actions">
+                <span class="type-pill pill-${s.type}">${s.type==='easy'?'EASY':s.type==='long'?'LONG':s.type==='tempo'?'TEMPO':s.type==='interval'?'INTERVAL':s.type==='race'?'🏁 RACE':s.type==='makeup'?'MAKEUP':'REST'}</span>
+                ${!isRest?`<button class="log-btn${isDone?' done':''}" onclick="toggleLog(event,'${key}',${wk.week},${si},${effTarget})">${isDone?'✓ Selesai':'Log sesi'}</button>`:''}
+                ${!isRace&&!isRest&&!isDone?`<button class="miss-btn" onclick="toggleMissed(event,'${key}')">Terlewat?</button>`:''}
+              </div>
+            </div>
+
+            <div class="log-panel" id="log-${key}">
+              <div class="log-panel-inner">
+                <div class="log-panel-title">Log Sesi — ${s.title}</div>
+                ${effTarget>0?`<div class="log-target-info">Target: <strong>${effTarget} km</strong>${deficit>0?' (termasuk +'+deficit+' km akumulasi)':''}</div>`:''}
+                <div class="log-grid">
+                  <div class="log-field">
+                    <span class="log-label">Jarak aktual (km)</span>
+                    <input class="log-input" id="inp-km-${key}" type="number" step="0.01" min="0" placeholder="${effTarget}" oninput="previewLog('${key}',${effTarget})">
+                  </div>
+                  <div class="log-field">
+                    <span class="log-label">Avg Pace (mm:ss)</span>
+                    <input class="log-input" id="inp-pace-${key}" type="text" placeholder="8:30">
+                  </div>
+                  <div class="log-field">
+                    <span class="log-label">Avg HR (bpm)</span>
+                    <input class="log-input" id="inp-hr-${key}" type="number" placeholder="140">
+                  </div>
+                  <div class="log-field">
+                    <span class="log-label">Avg Cadence (spm)</span>
+                    <input class="log-input" id="inp-cad-${key}" type="number" placeholder="155">
+                  </div>
+                </div>
+                <div class="log-field" style="margin-bottom:8px;">
+                  <span class="log-label">Catatan</span>
+                  <input class="log-input" id="inp-note-${key}" type="text" placeholder="Perasaan, kondisi, rute...">
+                </div>
+                <div class="log-preview" id="log-preview-${key}"></div>
+                <div class="log-btns">
+                  <button class="log-save" onclick="saveLog('${key}',${wk.week},${si},${effTarget})">Simpan ✓</button>
+                  <button class="log-cancel" onclick="closeLog('${key}')">Batal</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="missed-panel" id="missed-${key}">
+              <div class="missed-title">Sesi Terlewat — Program Pengganti Otomatis</div>
+              <div class="missed-body">${getMissedProgram(wk.week,si,s)}</div>
+              <div class="missed-actions">
+                <button class="maction-btn" onclick="scheduleMakeup('${key}',${wk.week},${si})">📅 Jadwal Makeup Minggu Depan</button>
+                <button class="maction-btn outline" onclick="closeMissed('${key}')">Tutup</button>
+              </div>
+            </div>
+          </div>`;
+      });
+
+      // Phase note
+      const phaseNotes={
+        1:`Z2 (136–145 bpm) adalah prioritas. Pace boleh lambat asal HR terjaga. Cadence drill wajib tiap Selasa.`,
+        2:`Tempo Z3 mulai aktifkan lactate threshold. Pace easy run akan turun alami — tanda base membaik.`,
+        3:`Race pace ${CFG.racePace} mulai diperkenalkan di long run. Cadence target 158–162 spm.`,
+        4:`VO2max interval Z5 paling berat dalam program. Tidur 8 jam+ wajib. Prioritas recovery.`,
+        5:`Simulasi race kondisi nyata. Pakai sepatu race saat long run. Latih strategi nutrisi lengkap.`,
+        6:`Taper adalah bagian dari latihan. Rasa lesu dan overthinking saat taper itu NORMAL.`
+      };
+
+      wkEl.innerHTML=`
+        <div class="week-header" onclick="toggleWeek(${wk.week})">
+          <div class="wk-num">${String(wk.week).padStart(2,'0')}</div>
+          <div class="wk-info">
+            <div class="wk-title">${wk.week===CFG.totalWeeks?'🏁 Race Week':pid===5&&Math.round(wk.week-CFG.totalWeeks*0.62)===Math.round((CFG.totalWeeks*0.19)/2)?'PEAK WEEK':PHASE_META.find(p=>p.id===pid).name}</div>
+            <div class="wk-dates">${wk.weekStart} – ${wk.weekEnd}</div>
+          </div>
+          <div class="wk-meta">
+            <div class="wk-vol">${actualKm>0?actualKm.toFixed(1)+'/':''}${wk.totalKm} km</div>
+            <div class="wk-dot ${dotClass}"></div>
+            <div class="wk-chevron" id="chev-${wk.week}">${isOpen?'▲':'▼'}</div>
+          </div>
+        </div>
+        <div class="week-body${isOpen?' open':''}" id="body-${wk.week}">
+          <div class="wk-prog">
+            <div class="wk-prog-labels"><span>Progress minggu ini</span><span>${actualKm.toFixed(1)} / ${wk.totalKm} km (${progPct}%)</span></div>
+            <div class="wk-prog-bar"><div class="wk-prog-fill" style="width:${progPct}%"></div></div>
+          </div>
+          ${sessionsHtml}
+          <div class="week-note"><strong>Catatan Fase ${pid}:</strong> ${phaseNotes[pid]||''}</div>
+        </div>`;
+
+      container.appendChild(wkEl);
+    });
+  });
+
+  updateGlobalProgress(allWeeks);
+  updateHeader();
+}
+
+// ═══════════════════════════════════ LOG FUNCTIONS
+function toggleLog(e, key, week, si, effTarget){
+  e.stopPropagation();
+  const panel=document.getElementById(`log-${key}`);
+  if(!panel) return;
+  const isOpen=panel.classList.contains('open');
+  document.querySelectorAll('.log-panel.open').forEach(p=>p.classList.remove('open'));
+  if(!isOpen){
+    panel.classList.add('open');
+    const log=load(`log_${key}`);
+    if(log){
+      const s=(id,v)=>{const el=document.getElementById(id);if(el)el.value=v||'';};
+      s(`inp-km-${key}`,log.km); s(`inp-pace-${key}`,log.pace);
+      s(`inp-hr-${key}`,log.hr); s(`inp-cad-${key}`,log.cadence);
+      s(`inp-note-${key}`,log.note);
+    }
+  }
+}
+function closeLog(key){document.getElementById(`log-${key}`)?.classList.remove('open');}
+
+function previewLog(key, target){
+  const kmEl=document.getElementById(`inp-km-${key}`);
+  const prev=document.getElementById(`log-preview-${key}`);
+  if(!kmEl||!prev) return;
+  const actual=parseFloat(kmEl.value);
+  if(isNaN(actual)||actual<=0){prev.classList.remove('show');return;}
+  const diff=parseFloat((actual-target).toFixed(2));
+  if(diff<0) prev.innerHTML=`Kurang <span class="deficit-txt">${Math.abs(diff)} km</span> dari target ${target} km → akan diakumulasikan ke sesi berikutnya.`;
+  else if(diff>0) prev.innerHTML=`Lebih <span class="surplus-txt">+${diff} km</span> dari target → mengurangi akumulasi sebelumnya.`;
+  else prev.innerHTML=`<span class="ok-txt">✓ Tepat target ${target} km!</span>`;
+  prev.classList.add('show');
+}
+
+function saveLog(key, week, si, target){
+  const g=id=>{const el=document.getElementById(id);return el?el.value.trim():'';};
+  const km=parseFloat(g(`inp-km-${key}`));
+  if(!km||km<=0){alert('Masukkan jarak aktual dulu.');return;}
+  save(`log_${key}`,{completed:true,km,pace:g(`inp-pace-${key}`),hr:g(`inp-hr-${key}`),cadence:g(`inp-cad-${key}`),note:g(`inp-note-${key}`),savedAt:new Date().toISOString()});
+  openWeeks.add(week);
+  renderPlan();
+  // Scroll back to the week
+  setTimeout(()=>{const el=document.getElementById(`week-${week}`);if(el)el.scrollIntoView({behavior:'smooth',block:'start'});},100);
+}
+
+// ═══════════════════════════════════ MISSED / MAKEUP
+function toggleMissed(e, key){
+  e.stopPropagation();
+  const panel=document.getElementById(`missed-${key}`);
+  if(!panel) return;
+  document.querySelectorAll('.missed-panel.show').forEach(p=>{if(p.id!==`missed-${key}`)p.classList.remove('show');});
+  panel.classList.toggle('show');
+}
+function closeMissed(key){document.getElementById(`missed-${key}`)?.classList.remove('show');}
+
+function scheduleMakeup(key, week, si){
+  const allWeeks=generateAllWeeks();
+  const currentWk=allWeeks.find(w=>w.week===week);
+  if(!currentWk) return;
+  const session=currentWk.sessions[si];
+  const nextWeek=week+1;
+  const existing=load(`makeup_${nextWeek}`)||[];
+
+  // Schedule makeup on Monday of next week
+  const nextWeekStart=addDays(CFG.startDate,(nextWeek-1)*7);
+  const monDate=nextWeekStart;
+
+  existing.push({
+    originalKey:key, originalTitle:session.title,
+    scheduledDay:'SEN', scheduledDate:monDate.toISOString(),
+    targetKm:session.targetKm, type:session.type
+  });
+  save(`makeup_${nextWeek}`, existing);
+  save(`missed_${key}`, {missed:true, madeupIn:nextWeek});
+  closeMissed(key);
+  openWeeks.add(nextWeek);
+  renderPlan();
+  alert(`✓ Sesi makeup "${session.title}" dijadwalkan di Senin minggu ke-${nextWeek} (${fmtDate(monDate)}).`);
+}
+
+// ═══════════════════════════════════ TOGGLE WEEK
+function toggleWeek(w){
+  const body=document.getElementById(`body-${w}`);
+  const chev=document.getElementById(`chev-${w}`);
+  if(!body) return;
+  const isOpen=body.classList.toggle('open');
+  if(chev) chev.textContent=isOpen?'▲':'▼';
+  if(isOpen) openWeeks.add(w);
+  else openWeeks.delete(w);
+}
+
+// ═══════════════════════════════════ GLOBAL PROGRESS
+function updateGlobalProgress(allWeeks){
+  const logs=allWeeks.flatMap(wk=>wk.sessions.map((_,si)=>load(`log_${wk.week}-${si}`)));
+  const completedWeeks=allWeeks.filter(wk=>
+    wk.sessions.filter(s=>s.type!=='rest').every((_,si)=>load(`log_${wk.week}-${si}`)?.completed)
+  ).length;
+  const totalKmDone=allWeeks.reduce((s,wk)=>s+wk.sessions.reduce((ss,_,si)=>{
+    const l=load(`log_${wk.week}-${si}`);
+    return ss+(l?.completed?parseFloat(l.km||0):0);
+  },0),0);
+  const pct=Math.round((completedWeeks/allWeeks.length)*100);
+  const bar=document.getElementById('globalBar');
+  const txt=document.getElementById('globalPct');
+  if(bar) bar.style.width=pct+'%';
+  if(txt) txt.textContent=`${completedWeeks}/${allWeeks.length} minggu · ${totalKmDone.toFixed(1)} km`;
+}
+
+function updateHeader(){
+  const start=new Date(CFG.startDate);
+  const end=addDays(CFG.startDate,CFG.totalWeeks*7);
+  const sub=document.getElementById('hdrSub');
+  if(sub) sub.textContent=`${fmtDate(start)} – ${fmtDate(end)} · 3 HARI/MINGGU · ${CFG.totalWeeks} MINGGU`;
+}
+
+// ═══════════════════════════════════ TABS
+function showTab(id){
+  document.querySelectorAll('.tab-content').forEach(el=>el.classList.remove('active'));
+  document.querySelectorAll('.pnav').forEach(el=>el.classList.remove('active'));
+  document.getElementById(`tab-${id}`)?.classList.add('active');
+  const idx={'plan':0,'settings':1,'nutrition':2}[id]||0;
+  document.querySelectorAll('.pnav')[idx]?.classList.add('active');
+}
+
+function showNutrTab(id){
+  document.querySelectorAll('.nutr-tab').forEach(el=>el.classList.remove('active'));
+  document.querySelectorAll('.nutr-content').forEach(el=>el.classList.remove('active'));
+  document.getElementById(`nutr-${id}`)?.classList.add('active');
+  event.target.classList.add('active');
+}
+
+// ═══════════════════════════════════ INIT
+loadConfigUI();
+renderPlan();
+</script>
+</body>
+</html>
