@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Running Training Plan</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f7f6f3;--surface:#fff;--s2:#f0efe9;--border:rgba(0,0,0,.08);
+  --border2:rgba(0,0,0,.15);--text:#1a1a18;--muted:#6b6b66;--soft:#9c9c96;
+  --accent:#c84b0f;--abg:#fdf0eb;--green:#2d6a2d;--gbg:#edf5ed;
+  --blue:#1a4d8f;--bbg:#eaf1fb;--amber:#8a5800;--ambg:#fdf5e0;
+  --purple:#5a1a9a;--pbg:#f0ebfd;--red:#8a0000;--rbg:#fdecea;
+  --teal:#1a6a5a;--tbg:#e6f4f1;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;}
+
+/* HEADER */
+.hdr{background:var(--text);padding:18px 20px 14px;position:sticky;top:0;z-index:200;}
+.hdr-in{max-width:920px;margin:0 auto;display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+.hdr-title{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:2px;color:#f7f6f3;line-height:1;}
+.hdr-sub{font-size:11px;color:rgba(247,246,243,.45);letter-spacing:.8px;margin-top:2px;}
+.hdr-right{margin-left:auto;text-align:right;}
+.prog-bar{width:130px;height:3px;background:rgba(255,255,255,.15);border-radius:2px;overflow:hidden;margin:4px 0 2px auto;}
+.prog-fill{height:100%;background:var(--accent);border-radius:2px;transition:width .5s;}
+.prog-txt{font-family:'DM Mono',monospace;font-size:10px;color:rgba(247,246,243,.55);}
+
+/* ZONE BAR */
+.zbar{background:var(--surface);border-bottom:1px solid var(--border);padding:6px 16px;}
+.zbar-in{max-width:920px;margin:0 auto;display:flex;gap:4px;align-items:center;flex-wrap:wrap;}
+.zpill{font-size:10px;padding:2px 7px;border-radius:3px;white-space:nowrap;font-family:'DM Mono',monospace;}
+.z1{background:#edf5ed;color:#2d6a2d;}.z2{background:#e6f4f1;color:#1a6a5a;}
+.z3{background:#fdf5e0;color:#7a4a1a;}.z4{background:#fdf0eb;color:#c84b0f;}
+.z5{background:#fdecea;color:#8a0000;}
+
+/* NAV */
+.nav{background:var(--surface);border-bottom:1px solid var(--border);padding:0 16px;position:sticky;top:66px;z-index:190;}
+.nav-in{max-width:920px;margin:0 auto;display:flex;overflow-x:auto;gap:0;}
+.ntab{padding:9px 14px;font-size:12px;font-weight:500;color:var(--muted);border-bottom:2px solid transparent;cursor:pointer;white-space:nowrap;transition:all .2s;background:none;border-top:none;border-left:none;border-right:none;font-family:'DM Sans',sans-serif;}
+.ntab:hover{color:var(--text);}
+.ntab.active{color:var(--accent);border-bottom-color:var(--accent);}
+
+/* MAIN */
+.main{max-width:920px;margin:0 auto;padding:20px 16px 80px;}
+.tcontent{display:none;}.tcontent.active{display:block;}
+
+/* CARD */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px 20px;margin-bottom:14px;}
+.card-title{font-size:16px;font-weight:500;margin-bottom:14px;}
+
+/* SETTINGS GRID */
+.sgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:14px;}
+.sfield{display:flex;flex-direction:column;gap:4px;}
+.sfield label{font-size:10px;letter-spacing:1px;color:var(--soft);text-transform:uppercase;}
+.sfield input,.sfield select{padding:8px 10px;border-radius:8px;border:1px solid var(--border2);font-size:13px;font-family:'DM Mono',monospace;color:var(--text);background:var(--s2);outline:none;transition:border-color .15s;width:100%;}
+.sfield input:focus,.sfield select:focus{border-color:var(--accent);}
+.btns{display:flex;gap:8px;flex-wrap:wrap;}
+.btn-p{padding:9px 18px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:opacity .15s;}
+.btn-p:hover{opacity:.88;}
+.btn-o{padding:8px 14px;background:transparent;color:var(--accent);border:1px solid var(--accent);border-radius:8px;font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif;}
+.race-selector{display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:8px;margin-bottom:14px;}
+.race-card{padding:10px 12px;border-radius:8px;border:1.5px solid var(--border2);cursor:pointer;transition:all .2s;text-align:center;background:var(--s2);}
+.race-card:hover{border-color:var(--accent);}
+.race-card.sel{background:var(--abg);border-color:var(--accent);color:var(--accent);}
+.race-card-icon{font-size:20px;display:block;margin-bottom:4px;}
+.race-card-name{font-size:12px;font-weight:600;}
+.race-card-dist{font-size:10px;color:var(--muted);}
+
+/* PHASE HEADER */
+.ph{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px 18px;margin-bottom:12px;}
+.ph-top{display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:12px;}
+.ph-badge{font-family:'Bebas Neue',sans-serif;font-size:11px;letter-spacing:2px;padding:3px 8px;border-radius:4px;}
+.ph-name{font-size:16px;font-weight:500;}
+.ph-period{font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;margin-top:2px;}
+.ph-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:8px;}
+.ph-stat{background:var(--s2);border-radius:7px;padding:8px 12px;}
+.ph-stat-l{font-size:9px;letter-spacing:1px;color:var(--soft);text-transform:uppercase;margin-bottom:2px;}
+.ph-stat-v{font-size:14px;font-weight:500;}
+
+/* WEEK */
+.wk{background:var(--surface);border:1px solid var(--border);border-radius:12px;margin-bottom:9px;overflow:hidden;}
+.wk-hdr{display:flex;align-items:center;gap:9px;padding:12px 16px;border-bottom:1px solid var(--border);cursor:pointer;user-select:none;transition:background .15s;}
+.wk-hdr:hover{background:var(--s2);}
+.wk-num{font-family:'Bebas Neue',sans-serif;font-size:19px;line-height:1;color:var(--soft);min-width:24px;}
+.wk-info{flex:1;}
+.wk-title{font-size:13px;font-weight:500;}
+.wk-dates{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);margin-top:1px;}
+.wk-meta{display:flex;align-items:center;gap:7px;}
+.wk-vol{font-family:'DM Mono',monospace;font-size:11px;color:var(--accent);}
+.wk-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.dot-done{background:var(--green);}.dot-partial{background:var(--amber);}.dot-pending{background:#d0cfc8;}
+.chev{font-size:11px;color:var(--soft);}
+.wk-body{display:none;padding:12px 14px;}
+.wk-body.open{display:block;}
+
+/* WEEK PROG */
+.wkprog{margin-bottom:10px;}
+.wkprog-lbl{display:flex;justify-content:space-between;font-size:10px;color:var(--soft);margin-bottom:3px;}
+.wkprog-bar{height:3px;background:var(--s2);border-radius:2px;overflow:hidden;}
+.wkprog-fill{height:100%;background:var(--green);border-radius:2px;transition:width .3s;}
+
+/* SESSION */
+.session{border-bottom:1px solid var(--border);padding:10px 0;}
+.session:last-child{border-bottom:none;padding-bottom:0;}
+.session.done{background:linear-gradient(to right,rgba(45,106,45,.05),transparent);border-radius:7px;padding:10px 8px;}
+.session-top{display:flex;gap:10px;align-items:flex-start;}
+.session-day{min-width:80px;}
+.session-day-name{font-size:11px;font-weight:600;color:var(--muted);letter-spacing:.5px;}
+.session-day-date{font-size:10px;color:var(--soft);font-family:'DM Mono',monospace;margin-top:1px;}
+.session-body{flex:1;}
+.session-title{font-size:13px;font-weight:500;margin-bottom:2px;}
+.session-desc{font-size:12px;color:var(--muted);line-height:1.55;margin-bottom:5px;}
+.session-chips{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:4px;}
+.chip{font-size:10px;padding:2px 6px;border-radius:3px;border:1px solid var(--border2);color:var(--muted);}
+.chip.deficit{background:var(--abg);border-color:rgba(200,75,15,.3);color:var(--accent);}
+.session-actions{display:flex;flex-direction:column;gap:4px;align-items:flex-end;min-width:72px;}
+.tpill{font-size:10px;padding:2px 8px;border-radius:20px;font-weight:600;letter-spacing:.3px;white-space:nowrap;}
+.tp-easy{background:var(--gbg);color:var(--green);}
+.tp-long{background:var(--bbg);color:var(--blue);}
+.tp-tempo{background:var(--ambg);color:var(--amber);}
+.tp-interval{background:var(--pbg);color:var(--purple);}
+.tp-rest{background:var(--s2);color:var(--soft);}
+.tp-race{background:var(--rbg);color:var(--red);}
+.log-btn{font-size:10px;padding:4px 9px;border-radius:6px;border:1.5px solid var(--border2);background:var(--surface);color:var(--muted);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;white-space:nowrap;}
+.log-btn:hover{border-color:var(--green);color:var(--green);}
+.log-btn.done{background:var(--gbg);border-color:var(--green);color:var(--green);font-weight:600;}
+.miss-btn{font-size:10px;padding:4px 9px;border-radius:6px;border:1px solid var(--border2);background:var(--surface);color:var(--muted);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;white-space:nowrap;}
+.miss-btn:hover{border-color:var(--accent);color:var(--accent);}
+
+/* NUTRITION INLINE */
+.nutr-inline{margin-top:8px;background:#fffdf5;border:1px solid rgba(138,88,0,.18);border-left:3px solid var(--amber);border-radius:0 7px 7px 0;padding:10px 12px;}
+.nutr-inline-title{font-size:11px;font-weight:600;color:var(--amber);margin-bottom:6px;letter-spacing:.3px;}
+.nutr-timeline{display:flex;flex-direction:column;gap:5px;}
+.nutr-item{display:flex;gap:8px;align-items:flex-start;}
+.nutr-km{font-family:'DM Mono',monospace;font-size:10px;font-weight:500;min-width:60px;color:var(--accent);padding-top:1px;flex-shrink:0;}
+.nutr-detail{font-size:11px;color:var(--muted);line-height:1.5;}
+.nutr-detail strong{color:var(--text);}
+
+/* LOG PANEL */
+.log-panel{overflow:hidden;max-height:0;transition:max-height .3s ease;}
+.log-panel.open{max-height:600px;}
+.log-in{margin-top:9px;padding:12px 14px;background:var(--gbg);border:1px solid rgba(45,106,45,.2);border-radius:8px;}
+.log-title{font-size:11px;font-weight:600;color:var(--green);margin-bottom:6px;}
+.log-tgt{font-size:11px;color:#4a7a4a;margin-bottom:9px;}
+.lgrid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:7px;}
+.lfield{display:flex;flex-direction:column;gap:3px;}
+.llabel{font-size:10px;letter-spacing:1px;color:#4a7a4a;text-transform:uppercase;}
+.linput{padding:7px 9px;border-radius:6px;border:1px solid rgba(45,106,45,.25);background:#fff;font-size:12px;font-family:'DM Mono',monospace;color:var(--text);outline:none;width:100%;transition:border-color .15s;}
+.linput:focus{border-color:var(--green);}
+.linput::placeholder{color:#9cbc9c;}
+.lprev{font-size:11px;padding:7px 9px;background:#fff;border:1px solid rgba(45,106,45,.2);border-radius:6px;margin-bottom:7px;line-height:1.5;display:none;}
+.lprev.show{display:block;}
+.lbtns{display:flex;gap:7px;}
+.lsave{padding:6px 12px;background:var(--green);color:#fff;border:none;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;}
+.lsave:hover{opacity:.85;}
+.lcancel{padding:6px 10px;background:transparent;color:var(--muted);border:1px solid var(--border2);border-radius:6px;font-size:11px;cursor:pointer;font-family:'DM Sans',sans-serif;}
+.lsaved{margin-top:6px;padding:7px 9px;background:#fff;border:1px solid rgba(45,106,45,.2);border-radius:6px;font-size:11px;font-family:'DM Mono',monospace;color:var(--green);line-height:1.7;display:none;}
+.lsaved.show{display:block;}
+
+/* MISSED PANEL */
+.miss-panel{display:none;margin-top:8px;padding:12px 14px;background:var(--abg);border:1px solid rgba(200,75,15,.2);border-radius:8px;}
+.miss-panel.show{display:block;}
+.miss-title{font-size:11px;font-weight:600;color:var(--accent);margin-bottom:7px;}
+.miss-reschedule{margin-bottom:10px;}
+.miss-day-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-top:6px;}
+.miss-day{padding:5px 3px;text-align:center;border-radius:6px;border:1px solid var(--border2);cursor:pointer;font-size:10px;font-weight:500;transition:all .15s;background:var(--surface);}
+.miss-day:hover{border-color:var(--accent);color:var(--accent);}
+.miss-day.cur{border-color:var(--border2);color:var(--soft);cursor:default;background:var(--s2);}
+.miss-day.avail{color:var(--green);}
+.miss-day.busy{color:var(--soft);opacity:.5;cursor:default;}
+.miss-note{font-size:11px;color:var(--muted);margin-bottom:8px;}
+.miss-btns{display:flex;gap:7px;flex-wrap:wrap;}
+.mbtn{font-size:11px;padding:5px 11px;border-radius:6px;border:1px solid var(--accent);background:var(--accent);color:#fff;cursor:pointer;font-family:'DM Sans',sans-serif;}
+.mbtn.out{background:transparent;color:var(--accent);}
+.mbtn:hover{opacity:.85;}
+
+/* WEEK NOTE */
+.wk-note{margin-top:10px;padding:9px 12px;background:var(--s2);border-radius:7px;font-size:11px;color:var(--muted);line-height:1.6;border-left:3px solid var(--accent);}
+.wk-note strong{color:var(--text);}
+
+/* INFO CARDS */
+.info-card{background:var(--s2);border-radius:8px;padding:11px 13px;margin-bottom:8px;}
+.info-card-title{font-size:13px;font-weight:500;margin-bottom:4px;}
+.info-card-body{font-size:12px;color:var(--muted);line-height:1.6;}
+.info-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="hdr-in">
+    <div>
+      <div class="hdr-title" id="hdrTitle">RUNNING PLAN</div>
+      <div class="hdr-sub" id="hdrSub">Loading...</div>
+    </div>
+    <div class="hdr-right">
+      <div style="font-size:10px;color:rgba(247,246,243,.4);letter-spacing:1px;">PROGRESS</div>
+      <div class="prog-bar"><div class="prog-fill" id="gBar" style="width:0%"></div></div>
+      <div class="prog-txt" id="gPct">0 / 0 minggu</div>
+    </div>
+  </div>
+</div>
+
+<div class="zbar">
+  <div class="zbar-in">
+    <span style="font-size:10px;color:var(--soft);letter-spacing:1px;margin-right:2px;">HR ZONE</span>
+    <span class="zpill z1">Z1·122–135</span><span class="zpill z2">Z2·136–145</span>
+    <span class="zpill z3">Z3·146–155</span><span class="zpill z4">Z4·156–165</span>
+    <span class="zpill z5">Z5·166–175</span>
+    <span style="font-size:10px;color:var(--soft);margin-left:4px;">· Easy/Long=Z2 · Race pace=Z4</span>
+  </div>
+</div>
+
+<div class="nav">
+  <div class="nav-in">
+    <button class="ntab active" onclick="showTab('plan')">📋 Program</button>
+    <button class="ntab" onclick="showTab('settings')">⚙️ Pengaturan</button>
+  </div>
+</div>
+
+<div class="main">
+
+<!-- ══ PLAN TAB ══ -->
+<div class="tcontent active" id="tab-plan">
+  <div id="planContainer"></div>
+</div>
+
+<!-- ══ SETTINGS TAB ══ -->
+<div class="tcontent" id="tab-settings">
+
+  <div class="card">
+    <div class="card-title">Jenis Program</div>
+    <div class="race-selector" id="raceSel">
+      <div class="race-card sel" onclick="selRace('5K')"><span class="race-card-icon">🏃</span><div class="race-card-name">5K</div><div class="race-card-dist">5 km</div></div>
+      <div class="race-card" onclick="selRace('10K')"><span class="race-card-icon">⚡</span><div class="race-card-name">10K</div><div class="race-card-dist">10 km</div></div>
+      <div class="race-card" onclick="selRace('HM')"><span class="race-card-icon">🏅</span><div class="race-card-name">Half Marathon</div><div class="race-card-dist">21.1 km</div></div>
+      <div class="race-card" onclick="selRace('FM')"><span class="race-card-icon">🎽</span><div class="race-card-name">Full Marathon</div><div class="race-card-dist">42.2 km</div></div>
+      <div class="race-card" onclick="selRace('U50')"><span class="race-card-icon">🌄</span><div class="race-card-name">Ultra 50K</div><div class="race-card-dist">50 km</div></div>
+      <div class="race-card" onclick="selRace('U100')"><span class="race-card-icon">🏔️</span><div class="race-card-name">Ultra 100K</div><div class="race-card-dist">100 km</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Konfigurasi Program</div>
+    <div class="sgrid">
+      <div class="sfield"><label>Tanggal Mulai</label><input type="date" id="cfg-start" value="2026-04-21"></div>
+      <div class="sfield"><label>Jumlah Minggu</label><input type="number" id="cfg-weeks" value="26" min="8" max="52"></div>
+      <div class="sfield"><label>Volume Fase Awal (km/mgg)</label><input type="number" id="cfg-v1" value="22" min="8" max="50"></div>
+      <div class="sfield"><label>Volume Puncak (km/mgg)</label><input type="number" id="cfg-v2" value="30" min="15" max="120"></div>
+      <div class="sfield"><label>HRmax (bpm)</label><input type="number" id="cfg-hrmax" value="188" min="150" max="220"></div>
+      <div class="sfield"><label>Target Race Pace (mm:ss)</label><input type="text" id="cfg-pace" value="7:06" placeholder="7:06"></div>
+      <div class="sfield"><label>Target Finish Time</label><input type="text" id="cfg-target" value="2:30" placeholder="2:30"></div>
+      <div class="sfield"><label>Hari Latihan per Minggu</label>
+        <select id="cfg-days">
+          <option value="3">3 hari (Sel, Kam, Sab/Min)</option>
+          <option value="4">4 hari (Sel, Rab, Kam, Sab)</option>
+          <option value="5">5 hari</option>
+        </select>
+      </div>
+    </div>
+    <div class="btns">
+      <button class="btn-p" onclick="applySettings()">Terapkan & Generate Ulang</button>
+      <button class="btn-o" onclick="resetLogs()">Reset Semua Log</button>
+    </div>
+    <div id="sfb" style="margin-top:8px;font-size:12px;color:var(--green);display:none;"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Tentang Fitur</div>
+    <div class="info-grid">
+      <div class="info-card"><div class="info-card-title">📅 Ubah Tanggal</div><div class="info-card-body">Ganti tanggal mulai kapan saja — semua jadwal sesi menyesuaikan otomatis.</div></div>
+      <div class="info-card"><div class="info-card-title">📏 Ubah Volume</div><div class="info-card-body">Volume km/minggu bisa disesuaikan. Distribusi per sesi dihitung ulang otomatis.</div></div>
+      <div class="info-card"><div class="info-card-title">🔄 Reschedule</div><div class="info-card-body">Sesi terlewat? Pilih hari lain dalam minggu yang sama untuk dijadwalkan ulang.</div></div>
+      <div class="info-card"><div class="info-card-title">➕ Akumulasi KM</div><div class="info-card-body">Kekurangan jarak otomatis ditambahkan ke sesi berikutnya sebagai bonus target.</div></div>
+      <div class="info-card"><div class="info-card-title">🍌 Nutrisi Inline</div><div class="info-card-body">Panduan makan/minum (di km berapa) langsung tampil di bawah tiap sesi latihan.</div></div>
+      <div class="info-card"><div class="info-card-title">🏃 Multi Race</div><div class="info-card-body">Program untuk 5K, 10K, HM, FM, Ultra 50K & 100K — masing-masing dengan struktur berbeda.</div></div>
+    </div>
+  </div>
+
+</div><!-- end settings -->
+</div><!-- end main -->
+
+<script>
+// ══════════════════════════════ STORAGE
+const SK='rtp_v4_';
+const ld=k=>{try{return JSON.parse(localStorage.getItem(SK+k))||null}catch{return null}};
+const sv=(k,v)=>{try{localStorage.setItem(SK+k,JSON.stringify(v))}catch{}};
+
+// ══════════════════════════════ RACE PRESETS
+const RACE_PRESETS={
+  '5K':  {weeks:12,v1:20,v2:35,pace:'5:00',target:'25:00',dist:5,   label:'5K'},
+  '10K': {weeks:16,v1:22,v2:40,pace:'5:45',target:'57:00',dist:10,  label:'10K'},
+  'HM':  {weeks:26,v1:22,v2:30,pace:'7:06',target:'2:30',  dist:21.1,label:'Half Marathon'},
+  'FM':  {weeks:32,v1:30,v2:55,pace:'7:30',target:'5:15',  dist:42.2,label:'Full Marathon'},
+  'U50': {weeks:36,v1:40,v2:70,pace:'9:00',target:'7:00',  dist:50,  label:'Ultra 50K'},
+  'U100':{weeks:48,v1:50,v2:90,pace:'10:30',target:'15:00',dist:100, label:'Ultra 100K'},
+};
+
+let selectedRace = ld('race')||'HM';
+
+function selRace(r){
+  selectedRace=r;
+  sv('race',r);
+  document.querySelectorAll('.race-card').forEach(el=>el.classList.remove('sel'));
+  event.currentTarget.classList.add('sel');
+  const p=RACE_PRESETS[r];
+  document.getElementById('cfg-weeks').value=p.weeks;
+  document.getElementById('cfg-v1').value=p.v1;
+  document.getElementById('cfg-v2').value=p.v2;
+  document.getElementById('cfg-pace').value=p.pace;
+  document.getElementById('cfg-target').value=p.target;
+}
+
+// ══════════════════════════════ CONFIG
+let CFG=ld('cfg')||{start:'2026-04-21',weeks:26,v1:22,v2:30,hrmax:188,pace:'7:06',target:'2:30',days:3,race:'HM'};
+
+function loadCfgUI(){
+  document.getElementById('cfg-start').value=CFG.start;
+  document.getElementById('cfg-weeks').value=CFG.weeks;
+  document.getElementById('cfg-v1').value=CFG.v1;
+  document.getElementById('cfg-v2').value=CFG.v2;
+  document.getElementById('cfg-hrmax').value=CFG.hrmax;
+  document.getElementById('cfg-pace').value=CFG.pace;
+  document.getElementById('cfg-target').value=CFG.target;
+  document.getElementById('cfg-days').value=CFG.days;
+  // Mark selected race
+  document.querySelectorAll('.race-card').forEach((el,i)=>{
+    const races=['5K','10K','HM','FM','U50','U100'];
+    el.classList.toggle('sel', races[i]===(CFG.race||'HM'));
+  });
+}
+
+function applySettings(){
+  CFG={
+    start:document.getElementById('cfg-start').value,
+    weeks:parseInt(document.getElementById('cfg-weeks').value)||26,
+    v1:parseInt(document.getElementById('cfg-v1').value)||22,
+    v2:parseInt(document.getElementById('cfg-v2').value)||30,
+    hrmax:parseInt(document.getElementById('cfg-hrmax').value)||188,
+    pace:document.getElementById('cfg-pace').value||'7:06',
+    target:document.getElementById('cfg-target').value||'2:30',
+    days:parseInt(document.getElementById('cfg-days').value)||3,
+    race:selectedRace||'HM'
+  };
+  sv('cfg',CFG);
+  const fb=document.getElementById('sfb');
+  fb.style.display='block';
+  fb.textContent=`✓ Program ${RACE_PRESETS[CFG.race]?.label||CFG.race} — ${CFG.weeks} minggu diperbarui.`;
+  setTimeout(()=>fb.style.display='none',3000);
+  renderPlan();
+  showTab('plan');
+}
+
+function resetLogs(){
+  if(!confirm('Reset semua log? Data latihan yang sudah dimasukkan akan hilang.')) return;
+  Object.keys(localStorage).filter(k=>k.startsWith(SK+'log_')||k.startsWith(SK+'rs_')).forEach(k=>localStorage.removeItem(k));
+  renderPlan();
+}
+
+// ══════════════════════════════ DATE HELPERS
+function addD(dateStr,n){const d=new Date(dateStr);d.setDate(d.getDate()+n);return d;}
+function fmt(d){const M=['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Ags','Sep','Okt','Nov','Des'];return `${d.getDate()} ${M[d.getMonth()]}`;}
+function fmtISO(d){return d.toISOString().slice(0,10);}
+function dayN(d){return ['MIN','SEN','SEL','RAB','KAM','JUM','SAB'][d.getDay()];}
+const DAY_FULL={SEN:'Senin',SEL:'Selasa',RAB:'Rabu',KAM:'Kamis',JUM:'Jumat',SAB:'Sabtu',MIN:'Minggu'};
+
+// ══════════════════════════════ NUTRITION GUIDE
+// Returns nutrition timeline based on session type and distance
+function getNutrition(type, km){
+  if(type==='rest') return null;
+  const items=[];
+
+  // Pre-run always
+  items.push({km:'H-2 jam', text:`<strong>Sarapan:</strong> Nasi putih + protein (telur/ayam) + pisang. Minum 400ml air.`});
+  if(km>=8) items.push({km:'H-15 mnt', text:`<strong>Pre-run boost:</strong> 1 gel energi atau 3 kurma. Minum 200ml air.`});
+  else items.push({km:'H-15 mnt', text:`<strong>Pre-run:</strong> 1 pisang kecil. Minum 200ml air.`});
+
+  if(type==='easy'){
+    if(km<8){
+      items.push({km:'Selama lari', text:`Tidak perlu gel. Cukup bawa air 300ml jika suhu >28°C.`});
+    } else {
+      items.push({km:`Km ${Math.round(km/2)}`, text:`Minum 150–200ml air atau isotonic. Tidak perlu gel untuk easy run.`});
+    }
+    items.push({km:'Selesai', text:`Minum 300ml air/isotonic dalam 30 mnt. Makan normal.`});
+    return items;
+  }
+
+  if(type==='tempo'||type==='interval'){
+    if(km>=10) items.push({km:`Km ${Math.round(km*0.4)}`, text:`Minum 150ml air di water break. Gel opsional jika sesi >60 mnt.`});
+    items.push({km:'Selesai', text:`<strong>Recovery window 30 mnt:</strong> Susu coklat, atau nasi + ayam + pisang. Protein + karbo segera.`});
+    return items;
+  }
+
+  if(type==='long'||type==='race'){
+    // Hydration every 20-25 min
+    const hydKms=[];
+    for(let k=5;k<km;k+=5) hydKms.push(k);
+    // Gel every ~45 min ≈ every 6-7 km
+    const gelKms=[];
+    for(let k=7;k<km;k+=7) gelKms.push(k);
+
+    items.push({km:'Km 0', text:`Mulai hidrasi ringan sejak start. Bawa botol atau cari water point.`});
+
+    // Build merged timeline
+    const allPoints=[];
+    hydKms.forEach(k=>{
+      const isGel=gelKms.includes(k)||gelKms.includes(k-1)||gelKms.includes(k+1);
+      allPoints.push({k, isGel});
+    });
+    gelKms.forEach(k=>{
+      if(!allPoints.find(p=>Math.abs(p.k-k)<=1)) allPoints.push({k,isGel:true});
+    });
+    allPoints.sort((a,b)=>a.k-b.k);
+
+    const shown=new Set();
+    allPoints.forEach(({k,isGel})=>{
+      if(shown.has(k)) return;
+      shown.add(k);
+      if(isGel){
+        items.push({km:`Km ${k}`, text:`<strong>Gel energi</strong> (Gu/Maurten/kurma 3 biji) + <strong>150–200ml air</strong> atau isotonic. Ambil sambil lari pelan — jangan berhenti mendadak.`});
+      } else {
+        items.push({km:`Km ${k}`, text:`<strong>Hidrasi:</strong> 150–200ml air atau Pocari Sweat. Jangan tunggu haus.`});
+      }
+    });
+
+    if(km>=18) items.push({km:`Km ${km-2}`, text:`<strong>Final push nutrition:</strong> Sisa gel jika ada, atau 2 kurma. Fokus mental untuk km terakhir.`});
+    items.push({km:'Finish', text:`<strong>Recovery:</strong> Isotonic + air segera. Dalam 30 mnt: pisang + protein bar atau makanan karbo+protein. Golden window recovery.`});
+    return items;
+  }
+
+  return null;
+}
+
+// ══════════════════════════════ PHASE METADATA
+const PHASE_META=[
+  {id:1,name:"Aerobic Base",badge:"FASE 1",bc:"#edf5ed",bt:"#2d6a2d",
+   note:"Z2 (136–145) adalah prioritas. Pace boleh lambat asal HR terjaga. Cadence drill Selasa."},
+  {id:2,name:"Aerobic Development",badge:"FASE 2",bc:"#eaf1fb",bt:"#1a4d8f",
+   note:"Tempo Z3 mulai aktifkan lactate threshold. Pace easy akan turun alami — tanda positif."},
+  {id:3,name:"Lactate Threshold",badge:"FASE 3",bc:"#fdf5e0",bt:"#7a4a1a",
+   note:"Race pace mulai diperkenalkan di long run. Cadence target 158–162 spm."},
+  {id:4,name:"VO2max & Speed",badge:"FASE 4",bc:"#f0ebfd",bt:"#5a1a9a",
+   note:"Interval Z5 adalah sesi terberat. Tidur 8 jam+ wajib. Recovery serius."},
+  {id:5,name:"Race Simulation",badge:"FASE 5",bc:"#fdecea",bt:"#8a0000",
+   note:"Simulasi race nyata. Pakai sepatu race saat long run. Latih nutrisi lengkap."},
+  {id:6,name:"Taper & Race",badge:"FASE 6",bc:"#f0edf8",bt:"#1a1a6a",
+   note:"Rasa lesu dan overthinking saat taper adalah NORMAL. Percayai prosesnya."},
+];
+
+function phaseFor(w,total){
+  const r=w/total;
+  if(r<=0.15)return 1;if(r<=0.31)return 2;if(r<=0.46)return 3;
+  if(r<=0.62)return 4;if(r<=0.81)return 5;return 6;
+}
+
+// ══════════════════════════════ DEFICIT
+function computeDeficit(allWeeks, upToWeek, upToSi){
+  let def=0;
+  for(const wk of allWeeks){
+    for(let si=0;si<wk.sessions.length;si++){
+      if(wk.week===upToWeek&&si===upToSi) return Math.max(0,parseFloat(def.toFixed(2)));
+      const log=ld(`log_${wk.week}-${si}`);
+      const s=wk.sessions[si];
+      if(!log||!log.completed||s.type==='rest') continue;
+      const diff=parseFloat(log.km||0)-parseFloat(s.targetKm||0);
+      if(diff<0) def+=Math.abs(diff);
+      else def=Math.max(0,def-diff);
+    }
+  }
+  return Math.max(0,parseFloat(def.toFixed(2)));
+}
+
+// ══════════════════════════════ GENERATE SESSIONS
+function makeSessions(w, phase, total, v1, v2, weekStart){
+  const isLast=w===total;
+  const dist=RACE_PRESETS[CFG.race||'HM']?.dist||21.1;
+
+  // Session dates: Tue=+1, Thu=+3, Sat=+5, Sun=+6 from Monday
+  const mon=weekStart; // weekStart is Monday
+  const tue=addD(fmtISO(mon),1),thu=addD(fmtISO(mon),3);
+  const sat=addD(fmtISO(mon),5),sun=addD(fmtISO(mon),6);
+
+  if(isLast){
+    const raceDist=dist;
+    return [
+      {day:'SEL',date:tue,type:'easy',targetKm:3,
+       title:'Easy Shakeout 3 km',desc:'Sangat santai Z2. Jaga kaki bergerak sebelum race day.',chips:['3 km','Z2: HR 136–145']},
+      {day:'KAM',date:thu,type:'rest',targetKm:0,
+       title:'Rest Total + Persiapan',desc:'Cek semua perlengkapan race. Siapkan sarapan besok. Tidur jam 21:00.',chips:['Istirahat penuh','Cek gear']},
+      {day:'SAB (H-1)',date:sat,type:'easy',targetKm:3,
+       title:'Shakeout + Strides 3 km',desc:'3 km santai + 4 strides pendek. Carbo loading malam ini.',chips:['3 km','4 strides','Carbo loading']},
+      {day:'MIN — RACE DAY',date:sun,type:'race',targetKm:raceDist,
+       title:`🏁 RACE DAY — ${RACE_PRESETS[CFG.race||'HM']?.label||'Race'} — TARGET ${CFG.target}`,
+       desc:`Start konservatif ${CFG.pace}/km di awal → build ke target pace → finish strong. Gel sesuai panduan nutrisi.`,
+       chips:[`${raceDist} km`,`Start: ${CFG.pace}/km`,`Target: ${CFG.target}`,'Gel sesuai rencana']}
+    ];
+  }
+
+  const vol=phase===1?v1:v2;
+  const isRec=(w%4===0)&&phase<6;
+  const rf=isRec?0.75:1;
+  const tuKm=Math.max(3,Math.round(vol*0.35*rf));
+  const thuKm=Math.max(2,Math.round(vol*0.25*rf));
+  const longKm=Math.max(5,Math.round(vol*0.40*rf));
+
+  if(phase===1){
+    return [
+      {day:'SEL',date:tue,type:'easy',targetKm:tuKm,
+       title:`Easy Run ${tuKm} km + Cadence Drill`,
+       desc:`HR di Z2 (136–145 bpm). Pace ${isRec?'sangat santai':'estimasi 8:30–9:00/km'}. ${isRec?'Recovery week — tidak ada drill.':`Cadence drill: 4×1 mnt @ 152 spm di 2 km terakhir.`}`,
+       chips:[`${tuKm} km`,'Z2: HR 136–145','Pace 8:30–9:00','Cadence drill']},
+      {day:'KAM',date:thu,type:'easy',targetKm:thuKm,
+       title:`Easy Run ${thuKm} km + Strides`,
+       desc:`HR di Z2 (136–145). Di akhir: 4×100m strides — akselerasi bertahap, recovery 60 dtk jalan.`,
+       chips:[`${thuKm} km`,'Z2: HR 136–145','4×100m strides']},
+      {day:'SAB/MIN',date:sat,type:'long',targetKm:longKm,
+       title:`Long Run ${longKm} km`,
+       desc:`Pace 8:30–9:30/km. HR di Z2 (136–145). ${isRec?'Recovery week — sangat santai.':'Bawa minum. Gel jika >10 km.'}`,
+       chips:[`${longKm} km`,'Z2: HR 136–145','Pace 8:30–9:30','Bawa minum']}
+    ];
+  }
+  if(phase===2){
+    const tKm=Math.round(tuKm*0.5);
+    return [
+      {day:'SEL',date:tue,type:isRec?'easy':'tempo',targetKm:tuKm,
+       title:isRec?`Easy Run ${tuKm} km`:`Tempo Run ${tuKm} km`,
+       desc:isRec?`Recovery — Z2 (136–145).`:`2 km WU Z2 + ${tKm} km @ Z3 (146–155, 7:45–8:10/km) + sisa easy Z2.`,
+       chips:[`${tuKm} km`,isRec?'Z2: HR 136–145':`${tKm} km @ Z3`,'HR 146–155']},
+      {day:'KAM',date:thu,type:'easy',targetKm:thuKm,
+       title:`Easy Run ${thuKm} km + Strides`,
+       desc:`Recovery Z2 dari tempo. 4×100m strides di akhir.`,
+       chips:[`${thuKm} km`,'Z2: HR 136–145','4×100m strides']},
+      {day:'SAB/MIN',date:sat,type:'long',targetKm:longKm,
+       title:`Long Run ${longKm} km`,
+       desc:isRec?`Santai Z2.`:`${longKm-2} km Z2 + 2 km finish @ Z3 (146–155). Gel di km ${Math.round(longKm/2)}.`,
+       chips:[`${longKm} km`,'Z2 + finish Z3',`Gel km ${Math.round(longKm/2)}`]}
+    ];
+  }
+  if(phase===3){
+    const iRep=Math.min(3+Math.floor(w-(total*0.31)),5);
+    return [
+      {day:'SEL',date:tue,type:isRec?'easy':'interval',targetKm:tuKm,
+       title:isRec?`Easy ${tuKm} km`:`Threshold Interval ${tuKm} km`,
+       desc:isRec?`Recovery Z2.`:`2 km WU Z2 + ${iRep}×${Math.round((tuKm-4)/iRep)} km @ Z3–Z4 (146–165, 7:30–7:45) · Rec 90 dtk jogging + 2 km CD Z2.`,
+       chips:[`${tuKm} km`,isRec?'Z2':'Z3–Z4 interval','WU+CD termasuk']},
+      {day:'KAM',date:thu,type:isRec?'easy':'tempo',targetKm:thuKm,
+       title:isRec?`Easy ${thuKm} km`:`Progressif Tempo ${thuKm} km`,
+       desc:isRec?`Santai Z2.`:`2 km Z2 → ${thuKm-2} km @ Z3 (146–155, 7:30–7:50) → sisa Z2. Pace naik tiap km.`,
+       chips:[`${thuKm} km`,isRec?'Z2':'Z3: HR 146–155','Progressif']},
+      {day:'SAB/MIN',date:sat,type:'long',targetKm:longKm,
+       title:`Long Run ${longKm} km`,
+       desc:isRec?`Santai Z2.`:`${longKm-3} km Z2 + 3 km @ race pace ${CFG.pace} (Z4: 156–165). Gel km ${Math.round(longKm/3)} & ${Math.round(longKm*2/3)}.`,
+       chips:[`${longKm} km`,isRec?'Z2':'3 km race pace Z4','Gel 2x']}
+    ];
+  }
+  if(phase===4){
+    const sets=Math.min(4+Math.floor(w-(total*0.46)*1.5),8);
+    return [
+      {day:'SEL',date:tue,type:isRec?'easy':'interval',targetKm:tuKm,
+       title:isRec?`Easy ${tuKm} km`:`VO2max Interval ${tuKm} km`,
+       desc:isRec?`Recovery Z2.`:`2 km WU Z2 + ${sets}×1000m @ Z5 (166–175, 6:10–6:30) · Rec 90 dtk jogging + 2 km CD Z2.`,
+       chips:[`${tuKm} km`,isRec?'Z2':`${sets}×1000m Z5`,'HR 166–175']},
+      {day:'KAM',date:thu,type:isRec?'easy':'tempo',targetKm:thuKm,
+       title:isRec?`Easy ${thuKm} km + Strides`:`Race Pace Run ${thuKm} km`,
+       desc:isRec?`Santai Z2 + 4×100m strides.`:`1 km WU Z2 + ${thuKm-2} km @ race pace ${CFG.pace} (Z4: 156–165) + 1 km CD Z2.`,
+       chips:[`${thuKm} km`,isRec?'Z2':'Z4: HR 156–165',`Race pace ${CFG.pace}`]},
+      {day:'SAB/MIN',date:sat,type:'long',targetKm:longKm,
+       title:`Long Run ${longKm} km`,
+       desc:isRec?`Santai Z2.`:`${longKm-5} km Z2 + 5 km @ Z4 race feel (156–165). Gel km ${Math.round(longKm/3)} & ${Math.round(longKm*2/3)}.`,
+       chips:[`${longKm} km`,isRec?'Z2':'5 km Z4 race feel','Gel 2x']}
+    ];
+  }
+  if(phase===5){
+    const phaseW=w-Math.round(total*0.62);
+    const totPhase5W=Math.round(total*0.19);
+    const isPeak=phaseW===Math.round(totPhase5W/2);
+    return [
+      {day:'SEL',date:tue,type:isPeak?'interval':'tempo',targetKm:tuKm,
+       title:isPeak?`Race Pace Interval ${tuKm} km`:`Tempo Run ${tuKm} km`,
+       desc:isPeak?`2 km WU Z2 + 2×4 km @ race pace ${CFG.pace} (Z4: 156–165, rec 3 mnt jalan) + 2 km CD.`:`2 km WU Z2 + ${tuKm-4} km @ Z3–Z4 (146–165, race feel) + 2 km CD Z2.`,
+       chips:[`${tuKm} km`,'Z4: HR 156–165',`Race pace ${CFG.pace}`]},
+      {day:'KAM',date:thu,type:'easy',targetKm:thuKm,
+       title:`Easy Run ${thuKm} km + Strides`,
+       desc:`Z2 recovery dari interval. 4×100m strides cadence 168 spm.`,
+       chips:[`${thuKm} km`,'Z2: HR 136–145','Strides 4×100m']},
+      {day:'SAB/MIN',date:sat,type:'long',targetKm:longKm,
+       title:isPeak?`🔥 PEAK Long Run ${longKm} km`:`Long Run ${longKm} km`,
+       desc:isPeak?`${longKm-7} km Z2 + 7 km @ race pace ${CFG.pace} (Z4). Gel km 7, 14, 19+. Pakai sepatu race.`:`${longKm-5} km Z2 + 5 km @ Z4 race pace. Gel km ${Math.round(longKm/3)} & ${Math.round(longKm*2/3)}.`,
+       chips:[`${longKm} km`,isPeak?'Sepatu race':'Z2+Z4',isPeak?'Gel 3x':'Gel 2x']}
+    ];
+  }
+  // phase 6 taper
+  const tW=w-Math.round(total*0.81);
+  const tTotal=Math.round(total*0.19);
+  const tf=Math.max(0.3,1-(tW/tTotal)*0.7);
+  const tTu=Math.max(3,Math.round(tuKm*tf));
+  const tThu=Math.max(2,Math.round(thuKm*tf));
+  const tLong=Math.max(6,Math.round(longKm*tf));
+  return [
+    {day:'SEL',date:tue,type:'easy',targetKm:tTu,title:`Easy Run ${tTu} km`,
+     desc:`Z2 + 4×100m strides. Jaga kaki tetap sharp tanpa lelah.`,chips:[`${tTu} km`,'Z2','Strides 4×100m']},
+    {day:'KAM',date:thu,type:'tempo',targetKm:tThu,title:`Tempo Pendek ${tThu} km`,
+     desc:`1 km WU + ${Math.max(1,tThu-2)} km @ Z3–Z4 (146–165, 7:15–7:30) + 1 km CD. Jaga neuromuscular sharpness.`,chips:[`${tThu} km`,'Z3–Z4','Pendek & tajam']},
+    {day:'SAB/MIN',date:sat,type:'long',targetKm:tLong,title:`Long Run ${tLong} km`,
+     desc:`Santai Z2. Tidak ada effort berat. Percayai proses taper.`,chips:[`${tLong} km`,'Z2','Santai total']}
+  ];
+}
+
+function generateAll(){
+  const weeks=[];
+  for(let w=1;w<=CFG.weeks;w++){
+    // Monday of week w
+    const mon=addD(CFG.start,(w-1)*7);
+    const phase=phaseFor(w,CFG.weeks);
+    const sessions=makeSessions(w,phase,CFG.weeks,CFG.v1,CFG.v2,mon);
+    // Check for rescheduled sessions
+    const rsKey=`rs_${w}`;
+    const rsList=ld(rsKey)||[];
+    rsList.forEach(rs=>{
+      const s=sessions[rs.si];
+      if(s) s.date=new Date(rs.newDate);
+    });
+    const totalKm=sessions.reduce((s,x)=>s+(x.targetKm||0),0);
+    weeks.push({week:w,phase,mon:fmt(mon),end:fmt(addD(fmtISO(mon),6)),monDate:mon,sessions,totalKm});
+  }
+  return weeks;
+}
+
+// ══════════════════════════════ OPEN WEEKS STATE
+let openW=new Set([1]);
+
+// ══════════════════════════════ MAIN RENDER
+function renderPlan(){
+  const all=generateAll();
+  const cont=document.getElementById('planContainer');
+  cont.innerHTML='';
+  let curPhase=0;
+
+  all.forEach(wk=>{
+    if(wk.phase!==curPhase){
+      curPhase=wk.phase;
+      const meta=PHASE_META[curPhase-1];
+      const phWeeks=all.filter(w=>w.phase===curPhase);
+      const phVol=curPhase===1?`${CFG.v1} km/mgg`:curPhase===6?'Turun bertahap':`${CFG.v2} km/mgg`;
+      const phEl=document.createElement('div');
+      phEl.className='ph';
+      phEl.innerHTML=`
+        <div class="ph-top">
+          <span class="ph-badge" style="background:${meta.bc};color:${meta.bt}">${meta.badge}</span>
+          <div><div class="ph-name">${meta.name}</div>
+          <div class="ph-period">${phWeeks[0].mon} – ${phWeeks[phWeeks.length-1].end} · Minggu ${phWeeks[0].week}–${phWeeks[phWeeks.length-1].week}</div></div>
+        </div>
+        <div class="ph-stats">
+          <div class="ph-stat"><div class="ph-stat-l">Volume</div><div class="ph-stat-v">${phVol}</div></div>
+          <div class="ph-stat"><div class="ph-stat-l">Minggu</div><div class="ph-stat-v">${phWeeks.length}</div></div>
+          <div class="ph-stat"><div class="ph-stat-l">Fokus</div><div class="ph-stat-v" style="font-size:11px">${meta.note.split('.')[0]}</div></div>
+        </div>`;
+      cont.appendChild(phEl);
+    }
+
+    // Week block
+    const logs=wk.sessions.map((_,si)=>ld(`log_${wk.week}-${si}`));
+    const doneCount=logs.filter((l,si)=>l&&l.completed&&wk.sessions[si].type!=='rest').length;
+    const trainCount=wk.sessions.filter(s=>s.type!=='rest').length;
+    const actualKm=logs.reduce((s,l)=>s+(l?.completed?parseFloat(l.km||0):0),0);
+    const progPct=wk.totalKm>0?Math.min(100,Math.round((actualKm/wk.totalKm)*100)):0;
+    const dotCls=doneCount===0?'dot-pending':doneCount===trainCount?'dot-done':'dot-partial';
+    const isOpen=openW.has(wk.week);
+
+    let sessHtml='';
+    wk.sessions.forEach((s,si)=>{
+      const key=`${wk.week}-${si}`;
+      const log=logs[si]||{};
+      const isDone=!!log.completed;
+      const isRace=s.type==='race';
+      const isRest=s.type==='rest';
+      const def=(!isRest&&!isDone)?computeDeficit(all,wk.week,si):0;
+      const effTarget=parseFloat((parseFloat(s.targetKm||0)+def).toFixed(2));
+      const defChip=def>0?`<span class="chip deficit">+${def} km akumulasi</span>`:'';
+
+      // Nutrition guide
+      const nutrItems=getNutrition(s.type,effTarget);
+      let nutrHtml='';
+      if(nutrItems&&!isRest&&!isDone){
+        nutrHtml=`<div class="nutr-inline">
+          <div class="nutr-inline-title">🍌 PANDUAN NUTRISI — ${effTarget} km</div>
+          <div class="nutr-timeline">
+            ${nutrItems.map(n=>`<div class="nutr-item"><span class="nutr-km">${n.km}</span><span class="nutr-detail">${n.text}</span></div>`).join('')}
+          </div>
+        </div>`;
+      }
+
+      // Reschedule options for missed
+      const rsDays=generateMissDayGrid(wk,si);
+
+      // Saved summary
+      const savedHtml=isDone?`<div class="lsaved show" id="sum-${key}">✓ ${log.km} km · Pace ${log.pace||'—'} · HR ${log.hr||'—'} bpm · Cadence ${log.cadence||'—'} spm${log.note?` · ${log.note}`:''}</div>`:`<div class="lsaved" id="sum-${key}"></div>`;
+
+      sessHtml+=`
+      <div class="session${isDone?' done':''}" id="row-${key}">
+        <div class="session-top">
+          <div class="session-day">
+            <div class="session-day-name">${s.day}</div>
+            <div class="session-day-date">${fmt(s.date)}</div>
+          </div>
+          <div class="session-body">
+            <div class="session-title" style="${isDone?'opacity:.5;text-decoration:line-through;':''}">${s.title}</div>
+            ${!isDone?`<div class="session-desc">${s.desc}</div>`:''}
+            <div class="session-chips">
+              ${s.chips.map(c=>`<span class="chip">${c}</span>`).join('')}${defChip}
+            </div>
+            ${savedHtml}
+            ${!isDone&&!isRest?nutrHtml:''}
+          </div>
+          <div class="session-actions">
+            <span class="tpill tp-${s.type}">${s.type==='easy'?'EASY':s.type==='long'?'LONG':s.type==='tempo'?'TEMPO':s.type==='interval'?'INTERVAL':s.type==='race'?'🏁 RACE':'REST'}</span>
+            ${!isRest?`<button class="log-btn${isDone?' done':''}" onclick="toggleLog(event,'${key}',${wk.week},${si},${effTarget})">${isDone?'✓ Selesai':'Log sesi'}</button>`:''}
+            ${!isRace&&!isRest&&!isDone?`<button class="miss-btn" onclick="toggleMiss(event,'${key}')">Terlewat?</button>`:''}
+          </div>
+        </div>
+
+        <div class="log-panel" id="logp-${key}">
+          <div class="log-in">
+            <div class="log-title">Log Sesi — ${s.title}</div>
+            ${effTarget>0?`<div class="log-tgt">Target: <strong>${effTarget} km</strong>${def>0?` (termasuk +${def} km akumulasi)`:''}</div>`:''}
+            <div class="lgrid">
+              <div class="lfield"><span class="llabel">Jarak aktual (km)</span><input class="linput" id="lkm-${key}" type="number" step="0.01" min="0" placeholder="${effTarget}" oninput="prevLog('${key}',${effTarget})"></div>
+              <div class="lfield"><span class="llabel">Avg Pace (mm:ss)</span><input class="linput" id="lpace-${key}" type="text" placeholder="8:30"></div>
+              <div class="lfield"><span class="llabel">Avg HR (bpm)</span><input class="linput" id="lhr-${key}" type="number" placeholder="140"></div>
+              <div class="lfield"><span class="llabel">Avg Cadence (spm)</span><input class="linput" id="lcad-${key}" type="number" placeholder="155"></div>
+            </div>
+            <div class="lfield" style="margin-bottom:8px;"><span class="llabel">Catatan</span><input class="linput" id="lnote-${key}" type="text" placeholder="Perasaan, rute, kondisi..."></div>
+            <div class="lprev" id="lp-${key}"></div>
+            <div class="lbtns">
+              <button class="lsave" onclick="saveLog('${key}',${wk.week},${si},${effTarget})">Simpan ✓</button>
+              <button class="lcancel" onclick="closeLog('${key}')">Batal</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="miss-panel" id="missp-${key}">
+          <div class="miss-title">Sesi Terlewat — Pilih Hari Lain dalam Minggu Ini</div>
+          <div class="miss-reschedule">
+            <div class="miss-note">Pilih hari yang tersedia untuk memindahkan sesi <strong>${s.title}</strong>:</div>
+            <div class="miss-day-grid">${rsDays.map(d=>`
+              <div class="miss-day ${d.cls}" onclick="${d.cls==='avail'?`reschedule('${key}',${wk.week},${si},'${d.date}','${d.label}')`:''}" title="${d.cls==='busy'?'Sudah ada sesi':d.cls==='cur'?'Hari ini (sesi ini)':'Tersedia'}">
+                <div>${d.label}</div><div style="font-size:9px;margin-top:2px;opacity:.7">${d.dateStr}</div>
+              </div>`).join('')}
+            </div>
+          </div>
+          <div class="miss-btns">
+            <button class="mbtn out" onclick="closeMiss('${key}')">Tutup</button>
+          </div>
+        </div>
+      </div>`;
+    });
+
+    const meta=PHASE_META[wk.phase-1];
+    const wkEl=document.createElement('div');
+    wkEl.className='wk'; wkEl.id=`wk-${wk.week}`;
+    const isPeak=wk.phase===5&&wk.week===Math.round(CFG.weeks*(0.62+0.19/2));
+    const wkTitle=wk.week===CFG.weeks?'🏁 Race Week':isPeak?'🔥 PEAK WEEK':meta.name;
+    wkEl.innerHTML=`
+      <div class="wk-hdr" onclick="toggleWk(${wk.week})">
+        <div class="wk-num">${String(wk.week).padStart(2,'0')}</div>
+        <div class="wk-info">
+          <div class="wk-title">${wkTitle}</div>
+          <div class="wk-dates">${wk.mon} – ${wk.end}</div>
+        </div>
+        <div class="wk-meta">
+          <div class="wk-vol">${actualKm>0?actualKm.toFixed(1)+'/':''}${wk.totalKm} km</div>
+          <div class="wk-dot ${dotCls}"></div>
+          <div class="chev" id="chev-${wk.week}">${isOpen?'▲':'▼'}</div>
+        </div>
+      </div>
+      <div class="wk-body${isOpen?' open':''}" id="body-${wk.week}">
+        <div class="wkprog">
+          <div class="wkprog-lbl"><span>Progress</span><span>${actualKm.toFixed(1)} / ${wk.totalKm} km (${progPct}%)</span></div>
+          <div class="wkprog-bar"><div class="wkprog-fill" style="width:${progPct}%"></div></div>
+        </div>
+        ${sessHtml}
+        <div class="wk-note"><strong>Catatan:</strong> ${meta.note}</div>
+      </div>`;
+    cont.appendChild(wkEl);
+  });
+
+  updateGlobal(all);
+  updateHeader();
+}
+
+// ══════════════════════════════ MISS DAY GRID
+function generateMissDayGrid(wk, curSi){
+  const days=['SEN','SEL','RAB','KAM','JUM','SAB','MIN'];
+  const sessionDays=wk.sessions.map(s=>s.day.split('/')[0].trim());
+  return days.map((d,i)=>{
+    const date=addD(fmtISO(wk.monDate),i);
+    const dateStr=fmt(date);
+    const isCur=sessionDays[curSi]===d||wk.sessions[curSi].day.includes(d);
+    const isBusy=!isCur&&sessionDays.some((sd,si)=>si!==curSi&&(sd===d||wk.sessions[si].day.includes(d)));
+    const cls=isCur?'cur':isBusy?'busy':'avail';
+    return {label:d,date:fmtISO(date),dateStr,cls};
+  });
+}
+
+// ══════════════════════════════ RESCHEDULE (same week, different day)
+function reschedule(key, week, si, newDateISO, newDayLabel){
+  const existing=ld(`rs_${week}`)||[];
+  const idx=existing.findIndex(r=>r.si===si);
+  const entry={si,newDate:newDateISO,newDay:newDayLabel};
+  if(idx>=0) existing[idx]=entry; else existing.push(entry);
+  sv(`rs_${week}`,existing);
+  closeMiss(key);
+  openW.add(week);
+  renderPlan();
+  // Scroll
+  setTimeout(()=>document.getElementById(`wk-${week}`)?.scrollIntoView({behavior:'smooth',block:'start'}),120);
+  alert(`✓ Sesi dipindahkan ke ${DAY_FULL[newDayLabel]||newDayLabel} (${newDateISO.split('-').reverse().slice(0,2).join(' ')})`);
+}
+
+// ══════════════════════════════ LOG
+function toggleLog(e,key,week,si,eff){
+  e.stopPropagation();
+  const p=document.getElementById(`logp-${key}`);if(!p)return;
+  const isO=p.classList.contains('open');
+  document.querySelectorAll('.log-panel.open').forEach(x=>x.classList.remove('open'));
+  if(!isO){
+    p.classList.add('open');
+    const log=ld(`log_${key}`);
+    if(log){
+      const s=(id,v)=>{const el=document.getElementById(id);if(el)el.value=v||'';};
+      s(`lkm-${key}`,log.km);s(`lpace-${key}`,log.pace);s(`lhr-${key}`,log.hr);s(`lcad-${key}`,log.cadence);s(`lnote-${key}`,log.note);
+    }
+  }
+}
+function closeLog(key){document.getElementById(`logp-${key}`)?.classList.remove('open');}
+
+function prevLog(key,target){
+  const km=parseFloat(document.getElementById(`lkm-${key}`)?.value);
+  const pr=document.getElementById(`lp-${key}`);if(!pr)return;
+  if(isNaN(km)||km<=0){pr.classList.remove('show');return;}
+  const d=parseFloat((km-target).toFixed(2));
+  pr.innerHTML=d<0?`Kurang <strong style="color:var(--accent)">${Math.abs(d)} km</strong> dari target ${target} km → diakumulasi ke sesi berikutnya.`:d>0?`Lebih <strong style="color:var(--green)">+${d} km</strong> → mengurangi akumulasi sebelumnya.`:`<strong style="color:var(--green)">✓ Tepat target ${target} km!</strong>`;
+  pr.classList.add('show');
+}
+
+function saveLog(key,week,si,target){
+  const g=id=>{const el=document.getElementById(id);return el?el.value.trim():'';};
+  const km=parseFloat(g(`lkm-${key}`));
+  if(!km||km<=0){alert('Masukkan jarak aktual dulu.');return;}
+  sv(`log_${key}`,{completed:true,km,pace:g(`lpace-${key}`),hr:g(`lhr-${key}`),cadence:g(`lcad-${key}`),note:g(`lnote-${key}`),savedAt:new Date().toISOString()});
+  openW.add(week);
+  renderPlan();
+  setTimeout(()=>document.getElementById(`wk-${week}`)?.scrollIntoView({behavior:'smooth',block:'start'}),120);
+}
+
+// ══════════════════════════════ MISSED
+function toggleMiss(e,key){
+  e.stopPropagation();
+  const p=document.getElementById(`missp-${key}`);if(!p)return;
+  document.querySelectorAll('.miss-panel.show').forEach(x=>{if(x.id!==`missp-${key}`)x.classList.remove('show');});
+  p.classList.toggle('show');
+}
+function closeMiss(key){document.getElementById(`missp-${key}`)?.classList.remove('show');}
+
+// ══════════════════════════════ WEEK TOGGLE
+function toggleWk(w){
+  const b=document.getElementById(`body-${w}`);
+  const c=document.getElementById(`chev-${w}`);
+  if(!b)return;
+  const o=b.classList.toggle('open');
+  if(c)c.textContent=o?'▲':'▼';
+  if(o)openW.add(w);else openW.delete(w);
+}
+
+// ══════════════════════════════ GLOBAL
+function updateGlobal(all){
+  const doneW=all.filter(wk=>wk.sessions.filter(s=>s.type!=='rest').every((_,si)=>ld(`log_${wk.week}-${si}`)?.completed)).length;
+  const kmDone=all.reduce((s,wk)=>s+wk.sessions.reduce((ss,_,si)=>{const l=ld(`log_${wk.week}-${si}`);return ss+(l?.completed?parseFloat(l.km||0):0);},0),0);
+  const pct=Math.round((doneW/all.length)*100);
+  const bar=document.getElementById('gBar');const txt=document.getElementById('gPct');
+  if(bar)bar.style.width=pct+'%';
+  if(txt)txt.textContent=`${doneW}/${all.length} minggu · ${kmDone.toFixed(1)} km`;
+}
+
+function updateHeader(){
+  const p=RACE_PRESETS[CFG.race||'HM'];
+  const end=addD(CFG.start,CFG.weeks*7);
+  document.getElementById('hdrTitle').textContent=`${p?.label||CFG.race} — TARGET ${CFG.target}`;
+  document.getElementById('hdrSub').textContent=`${fmt(new Date(CFG.start))} – ${fmt(end)} · ${CFG.weeks} MINGGU · 3 HARI/MGG · ${CFG.v1}→${CFG.v2} KM`;
+}
+
+// ══════════════════════════════ TABS
+function showTab(id){
+  document.querySelectorAll('.tcontent').forEach(el=>el.classList.remove('active'));
+  document.querySelectorAll('.ntab').forEach(el=>el.classList.remove('active'));
+  document.getElementById(`tab-${id}`)?.classList.add('active');
+  const idx={plan:0,settings:1}[id]||0;
+  document.querySelectorAll('.ntab')[idx]?.classList.add('active');
+}
+
+// ══════════════════════════════ INIT
+loadCfgUI();
+renderPlan();
+</script>
+</body>
+</html>
